@@ -7,6 +7,7 @@
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Arrays" %>
+<%@ page import="java.util.TreeMap" %>
 <%@ page import="java.time.LocalDate" %>
 
 <%!
@@ -104,49 +105,53 @@
     Class.forName("com.mysql.jdbc.Driver");
     Connection connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/scheduler", "sehyun", "sehyun6685@");
     
-    // 권한 가져오기
+    // 권한, 부서 가져오기
     ResultSet rankResult = connect.prepareStatement("SELECT rank, department FROM account WHERE idx = " + account_idx).executeQuery();
-
     rankResult.next();
     String account_rank = rankResult.getString(1);
     String account_department = rankResult.getString(2);
 
+    // 날짜 계산
     ArrayList<String> calander = new ArrayList(getCalander(year, month));
-    ArrayList<ArrayList<String>> schedules = new ArrayList();
 
-    // 데이터 가져오기 (팀원)
-    if(account_rank.equals("member")){
-        String sql = "SELECT date, time, content FROM schedule WHERE account_idx = ? AND date between ? and ?;";
-        PreparedStatement query = connect.prepareStatement(sql);
-        query.setString(1, account_idx);
-        query.setString(2, calander.get(0).split("\"")[1]);
-        query.setString(3, calander.get(calander.size() - 1).split("\"")[1]);
-        ResultSet scheduleResult = query.executeQuery();
-        
-        while(scheduleResult.next()){
-            ArrayList<String> tmp = new ArrayList();
-            tmp.add("\"" + scheduleResult.getString(1) + "\"");
-            tmp.add("\"" + scheduleResult.getString(2) + "\"");
-            tmp.add("\"" + scheduleResult.getString(3) + "\"");
-            schedules.add(tmp);
-        }
+    // 데이터 가져오기
+    ArrayList<ArrayList<String>> schedules = new ArrayList();
+    ArrayList<ArrayList<String>> departmentSchedules = new ArrayList();
+
+    // (팀원)
+    String sql = "SELECT date, time, content FROM schedule WHERE account_idx = ? AND date between ? and ?;";
+    PreparedStatement query = connect.prepareStatement(sql);
+    query.setString(1, account_idx);
+    query.setString(2, calander.get(0).split("\"")[1]);
+    query.setString(3, calander.get(calander.size() - 1).split("\"")[1]);
+    ResultSet scheduleResult = query.executeQuery();
+    
+    while(scheduleResult.next()){
+        ArrayList<String> tmp = new ArrayList();
+        tmp.add("\"" + scheduleResult.getString(1) + "\"");
+        tmp.add("\"" + scheduleResult.getString(2).substring(0,5) + "\"");
+        tmp.add("\"" + scheduleResult.getString(3) + "\"");
+        schedules.add(tmp);
     }
 
-    // 데이터 가져오기 (팀장)
+    // (팀장)
+
+    
+
     if(account_rank.equals("leader")){
-        String sql = "SELECT account.name, schedule.date, schedule.time, schedule.content FROM schedule JOIN account ON schedule.account_idx = account.idx WHERE schedule.date BETWEEN ? AND ? AND account.department = ?;";
-        PreparedStatement query = connect.prepareStatement(sql);
-        query.setString(1, calander.get(0).split("\"")[1]);
-        query.setString(2, calander.get(calander.size() - 1).split("\"")[1]);
-        query.setString(3, account_department);
-        ResultSet scheduleResult = query.executeQuery();
+        String departmentSql = "SELECT schedule.date, schedule.time, schedule.content, account.name FROM schedule JOIN account ON schedule.account_idx = account.idx WHERE schedule.date BETWEEN ? AND ? AND account.department = ?;";
+        PreparedStatement departmentQuery = connect.prepareStatement(departmentSql);
+        departmentQuery.setString(1, calander.get(0).split("\"")[1]);
+        departmentQuery.setString(2, calander.get(calander.size() - 1).split("\"")[1]);
+        departmentQuery.setString(3, account_department);
+        ResultSet departmentScheduleResult = departmentQuery.executeQuery();
         
-        while(scheduleResult.next()){
+        while(departmentScheduleResult.next()){
             ArrayList<String> tmp = new ArrayList();
-            tmp.add("\"" + scheduleResult.getString(1) + "\"");
-            tmp.add("\"" + scheduleResult.getString(2) + "\"");
-            tmp.add("\"" + scheduleResult.getString(3) + "\"");
-            schedules.add(tmp);
+            tmp.add("\"" + departmentScheduleResult.getString(1) + "\"");
+            tmp.add("\"" + departmentScheduleResult.getString(2).substring(0,5) + "\"");
+            tmp.add("\"" + departmentScheduleResult.getString(3) + "\"");
+            departmentSchedules.add(tmp);
         }
     }
 %>
@@ -227,7 +232,8 @@
 </body>
 
 <script>
-    function displayMonthChecked(month){ // 현재 선택된 month checked 출력
+    // 현재 선택된 month checked 출력
+    function displayMonthChecked(month){
         var monthObject = {
             1: 'january',
             2: 'february',
@@ -244,24 +250,45 @@
         };
         document.getElementById(monthObject[month]).checked = true
     }
-    function displayYear(year){ // 현재 year 출력
+    // 현재 year 출력
+    function displayYear(year){
         document.getElementById("year").innerText = year + "년"
     }
-    function displayCalander(calander, month){ // calander 출력
+    // calander 출력
+    function displayCalander(calander, month, schedules, departmentSchedules){
         for (var i of calander) {
             var item = document.createElement("div")
             item.className = "scheduler-calander-table-date-item"
-            if(Number(i.split("-")[1]) !== month)
-                item.classList.add("scheduler-calander-table-date-item-outside")
             item.id = i
-            item.innerText = Number(i.split("-")[2])
+
+            var day = document.createElement("div")
+            day.className = "scheduler-calander-table-date-item-day"
+            day.innerText = Number(i.split("-")[2])
+            if(Number(i.split("-")[1]) !== month)
+                day.classList.add("scheduler-calander-table-date-item-outside")
+
+            item.appendChild(day)
+
+            if (schedules.filter(a => a[0] === i).length > 0){
+                var count = document.createElement("div")
+                count.className = "scheduler-calander-table-date-item-count"
+                count.innerText = schedules.filter(a => a[0] === i).length + "개의 일정"
+                item.appendChild(count)
+            }
+            if (departmentSchedules.filter(a => a[0] === i).length > 0){
+                var count = document.createElement("div")
+                count.className = "scheduler-calander-table-date-item-count"
+                count.innerText = departmentSchedules.filter(a => a[0] === i).length + "개의 팀일정"
+                item.appendChild(count)
+            }
+
             document.getElementById("table").appendChild(item)
         }
     }
 
     var calander = <%=calander%>
     var schedules = <%=schedules%>
-    console.log(schedules)
+    var departmentSchedules = <%=departmentSchedules%>
     var diff = 1000 * 60 * 60 * 9
     var year = <%=year%>
     var month = <%=month%>
@@ -294,7 +321,7 @@
 
     displayMonthChecked(month)
     displayYear(year)
-    displayCalander(calander, month)
+    displayCalander(calander, month, schedules, departmentSchedules)
 </script>
 
 </html>
