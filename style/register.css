@@ -1,0 +1,70 @@
+.register-body {
+  height: 100vh;
+  background-color: var(--color-bgColor);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.register-form {
+  width: 440px;
+  height: 800px;
+  padding: 18px;
+  background-color: var(--color-white);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+}
+
+.register-form-title {
+  width: 100%;
+  font-size: var(--fontSize-huge);
+  font-weight: 700;
+}
+
+.register-form-input {
+  width: 100%;
+  border: 1px var(--color-gray) solid;
+  padding: 20px;
+  font-size: var(--fontSize-medium);
+  background-color: var(--color-white);
+  border-radius: 10px;
+}
+.register-form-input::placeholder {
+  color: var(--color-lightGray);
+}
+
+.register-form-select {
+  width: 100%;
+  border: 1px var(--color-gray) solid;
+  padding: 20px;
+  font-size: var(--fontSize-medium);
+  background-color: var(--color-white);
+  border-radius: 10px;
+}
+.register-form-select-default {
+  color: var(--color-black);
+  display: none;
+}
+
+.register-form-submit {
+  width: 100%;
+  color: var(--color-white);
+  background-color: var(--color-navy);
+  border: none;
+  padding: 20px;
+  font-size: var(--fontSize-medium);
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.register-form-login {
+  margin: 10px 0;
+  width: fit-content;
+  color: var(--color-lightBlue);
+  border: none;
+  font-size: var(--fontSize-small);
+}

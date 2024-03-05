@@ -1,0 +1,114 @@
+.mypageEdit-body {
+  height: 100vh;
+  background-color: var(--color-bgColor);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mypageEdit-box {
+  width: 550px;
+  height: 550px;
+  padding: 20px;
+  background-color: var(--color-white);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  position: relative;
+}
+
+.mypageEdit-box-title {
+  position: absolute;
+  top: -62px;
+  left: 0;
+  font-size: var(--fontSize-veryHuge);
+}
+
+.mypageEdit-box-title-lightBlue {
+  color: var(--color-lightBlue);
+}
+
+.mypageEdit-box-back {
+  top: -64px;
+  right: 0;
+  position: absolute;
+  background-color: var(--color-whiteGray);
+  border: 1px solid var(--color-gray);
+  padding: 14px;
+  font-size: var(--fontSize-small);
+  border-radius: 10px;
+  margin-left: 10px;
+}
+
+.mypageEdit-box-subtitle {
+  width: 100%;
+  font-size: var(--fontSize-big);
+}
+
+.mypageEdit-box-info {
+  width: 100%;
+  height: 70%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: var(--fontSize-small);
+}
+
+.mypageEdit-box-info-item {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mypageEdit-box-info-item-left {
+  width: 50%;
+  text-align: end;
+  color: var(--color-lightBlue);
+  margin-right: 10px;
+}
+.mypageEdit-box-info-item-right {
+  width: 50%;
+  margin-left: 10px;
+  border: 1px var(--color-gray) solid;
+  padding: 10px;
+  font-size: var(--fontSize-small);
+  background-color: var(--color-white);
+  border-radius: 10px;
+}
+.mypageEdit-box-info-item-right::placeholder {
+  color: var(--color-lightGray);
+}
+
+.mypageEdit-box-info-item-right-default {
+  display: none;
+}
+
+.mypageEdit-box-manage {
+  display: flex;
+  width: 100%;
+  justify-content: end;
+}
+
+.mypageEdit-box-manage-cancel {
+  margin-right: 15px;
+  width: fit-content;
+  border: 1px var(--color-gray) solid;
+  background-color: var(--color-whiteGray);
+  font-size: var(--fontSize-medium);
+  padding: 15px;
+  border-radius: 10px;
+}
+
+.mypageEdit-box-manage-save {
+  width: fit-content;
+  color: var(--color-white);
+  background-color: var(--color-lightBlue);
+  border: none;
+  padding: 15px;
+  font-size: var(--fontSize-medium);
+  border-radius: 10px;
+}

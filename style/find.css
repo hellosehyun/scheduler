@@ -1,0 +1,87 @@
+.find-body {
+  height: 100vh;
+  background-color: var(--color-bgColor);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.find-form {
+  width: 440px;
+  height: 400px;
+  padding: 18px;
+  background-color: var(--color-white);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+}
+
+.find-form-title {
+  width: 100%;
+  font-size: var(--fontSize-huge);
+  font-weight: 700;
+}
+
+.find-form-input {
+  width: 100%;
+  border: 1px var(--color-gray) solid;
+  padding: 20px;
+  font-size: var(--fontSize-medium);
+  background-color: var(--color-white);
+  border-radius: 10px;
+}
+.find-form-input::placeholder {
+  color: var(--color-lightGray);
+}
+
+.find-form-box {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.find-form-box-find {
+  color: var(--color-lightBlue);
+  font-size: var(--fontSize-small);
+}
+
+.find-form-box-cancel {
+  margin-left: auto;
+  margin-right: 12px;
+  background-color: var(--color-whiteGray);
+  border: 1px var(--color-gray) solid;
+  padding: 20px;
+  font-size: var(--fontSize-medium);
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.find-form-box-submit {
+  color: var(--color-white);
+  background-color: var(--color-lightBlue);
+  border: none;
+  padding: 20px;
+  font-size: var(--fontSize-medium);
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.find-form-line {
+  height: 1px;
+  width: 100%;
+  background-color: var(--color-gray);
+}
+
+.find-form-register {
+  width: fit-content;
+  color: var(--color-white);
+  background-color: var(--color-navy);
+  border: none;
+  padding: 20px;
+  font-size: var(--fontSize-medium);
+  border-radius: 10px;
+}

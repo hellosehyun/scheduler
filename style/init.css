@@ -1,0 +1,48 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  color: var(--color-black);
+  font-weight: 700;
+}
+
+body {
+  height: 100vh;
+  background-color: var(--color-bgColor);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+a {
+  text-decoration: none;
+}
+
+label {
+  cursor: pointer;
+}
+
+:root {
+  --color-pink: #f99292;
+  --color-lightBlue: #809af4;
+  --color-navy: #203da6;
+  --color-black: #494949;
+  --color-lightGray: #e4e4e4;
+  --color-whiteGray: #f6f6f6;
+  --color-gray: #d2d2d2;
+  --color-white: white;
+  --color-modalBgColor: rgba(0, 0, 0, 0.75);
+  --color-bgColor: #eaeaea;
+
+  --fontSize-veryHuge: 48px;
+  --fontSize-huge: 34px;
+  --fontSize-big: 24px;
+  --fontSize-medium: 20px;
+  --fontSize-small: 18px;
+  --fontSize-tiny: 12px;
+
+  --btnPadding-normal: 10px;
+
+  --shadow: 0 8px 6px rgba(0, 0, 0, 0.1), 0 8px 6px rgba(0, 0, 0, 0.1);
+}
