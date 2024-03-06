@@ -1,4 +1,4 @@
-.date-body {
+.schedule-body {
   width: 100%;
   height: 100%;
   background-color: var(--color-modalBgColor);
@@ -7,7 +7,7 @@
   align-items: center;
 }
 
-.date-box {
+.schedule-box {
   width: 350px;
   height: 600px;
   padding: 20px;
@@ -20,19 +20,19 @@
   box-shadow: var(--shadow);
 }
 
-.date-box-title {
+.schedule-box-title {
   width: 100%;
   font-size: var(--fontSize-big);
 }
 
-.date-box-list {
+.schedule-box-list {
   width: 100%;
   height: 80%;
   display: flex;
   flex-direction: column;
 }
 
-.date-box-list-item {
+.schedule-box-list-item {
   border-radius: 10px;
   border: 1px var(--color-gray) solid;
   margin-bottom: 15px;
@@ -42,11 +42,11 @@
   padding: 10px;
   position: relative;
 }
-.date-box-list-item:last-child {
+.schedule-box-list-item:last-child {
   margin-bottom: 0;
 }
 
-.date-box-cancel {
+.schedule-box-cancel {
   margin-left: auto;
   padding: 15px;
   border: 1px var(--color-gray) solid;
@@ -55,21 +55,21 @@
   font-size: var(--fontSize-small);
 }
 
-.date-box-list-item-time {
+.schedule-box-list-item-time {
   font-size: var(--fontSize-tiny);
   margin-bottom: 10px;
 }
 
-.date-box-list-item-content {
+.schedule-box-list-item-content {
   font-size: var(--fontSize-small);
 }
 
-.date-box-list-item-manage {
+.schedule-box-list-item-manage {
   bottom: 10px;
   right: 10px;
   position: absolute;
 }
-.date-box-list-item-manage-edit {
+.schedule-box-list-item-manage-edit {
   padding: 8px;
   background-color: var(--color-lightBlue);
   border: none;
@@ -78,7 +78,7 @@
   font-size: var(--fontSize-small);
 }
 
-.date-box-list-item-manage-delete {
+.schedule-box-list-item-manage-delete {
   margin-left: 8px;
   padding: 8px;
   background-color: var(--color-pink);
@@ -88,17 +88,17 @@
   font-size: var(--fontSize-small);
 }
 
-.date-box-list-item-editState {
+.schedule-box-list-item-editState {
   display: flex;
   flex-direction: column;
 }
 
-.date-box-list-item-editState-when {
+.schedule-box-list-item-editState-when {
   display: flex;
   justify-content: space-between;
 }
 
-.date-box-list-item-editState-when-input {
+.schedule-box-list-item-editState-when-input {
   width: calc(50% - 5px);
   border: 1px var(--color-gray) solid;
   padding: 5px;
@@ -107,7 +107,7 @@
   border-radius: 10px;
 }
 
-.date-box-list-item-editState-input {
+.schedule-box-list-item-editState-input {
   border: 1px var(--color-gray) solid;
   margin-top: 10px;
   padding: 10px;
@@ -115,17 +115,17 @@
   background-color: var(--color-white);
   border-radius: 10px;
 }
-.date-box-list-item-editState-input::placeholder {
+.schedule-box-list-item-editState-input::placeholder {
   color: var(--color-lightGray);
 }
 
-.date-box-list-item-editState-manage {
+.schedule-box-list-item-editState-manage {
   margin-top: 10px;
   width: 100%;
   display: flex;
 }
 
-.date-box-list-item-editState-manage-cancel {
+.schedule-box-list-item-editState-manage-cancel {
   padding: 8px;
   border: 1px var(--color-gray) solid;
   background-color: var(--color-whiteGray);
@@ -133,7 +133,7 @@
   font-size: var(--fontSize-small);
 }
 
-.date-box-list-item-editState-manage-submit {
+.schedule-box-list-item-editState-manage-submit {
   margin-left: auto;
   margin-right: 10px;
   padding: 8px;

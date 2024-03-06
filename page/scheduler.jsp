@@ -172,10 +172,8 @@
     <div id="writeModal" class="scheduler-modal-write unavailable">
         <jsp:include page="/write.jsp"/>
     </div>
-    <div id="dateModal" class="scheduler-modal-date unavailable">
-        <jsp:include page="/schedule.jsp">
-            <jsp:param name="date" value="1" />
-        </jsp:include>
+    <div id="scheduleModal" class="scheduler-modal-schedule unavailable">
+        <jsp:include page="/schedule.jsp"/>
     </div>
     <div class="scheduler-calander">
         <a href="scheduler.jsp" class="scheduler-calander-title">
@@ -323,7 +321,8 @@
 
             element.classList.add("scheduler-calander-table-date-item-clickable")
             element.addEventListener("click", function() {
-                
+                document.getElementById("scheduleModal").classList.remove("available");
+                console.log(1)
             })
         }
     }
@@ -347,7 +346,7 @@
 
             element.classList.add("scheduler-calander-table-date-item-clickable")
             element.addEventListener("click", function() {
-                
+                document.getElementById("scheduleModal").classList.remove("unavailable")
             })
         }
     }
