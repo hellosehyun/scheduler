@@ -7,10 +7,9 @@
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Arrays" %>
-<%@ page import="java.util.TreeMap" %>
 <%@ page import="java.time.LocalDate" %>
 
-<%!
+<%! // function
     public Integer getMonthDay(Integer year, Integer month) {
         List<Integer> case1 = Arrays.asList(1,3,5,7,8,10,12);
         List<Integer> case2 = Arrays.asList(4,6,9,11);
@@ -99,6 +98,7 @@
     if(account_idx == null){
         out.println("<script>alert('로그인 세션 만료');</script>");
         out.println("<script>location.href = '/login.jsp'</script>");
+        return;
     }
 
     // 데이테베이스 연결
@@ -113,48 +113,42 @@
 
     // 날짜 계산
     ArrayList<String> calander = new ArrayList(getCalander(year, month));
-
-    // 데이터 가져오기
     ArrayList<ArrayList<String>> schedules = new ArrayList();
     ArrayList<ArrayList<String>> departmentSchedules = new ArrayList();
 
     // (팀원)
-    String sql = "SELECT date, time, content FROM schedule WHERE account_idx = ? AND date between ? and ?;";
+    String sql = "SELECT date FROM schedule WHERE account_idx = ? AND date between ? and ?;";
     PreparedStatement query = connect.prepareStatement(sql);
     query.setString(1, account_idx);
     query.setString(2, calander.get(0).split("\"")[1]);
     query.setString(3, calander.get(calander.size() - 1).split("\"")[1]);
     ResultSet scheduleResult = query.executeQuery();
-    
+
     while(scheduleResult.next()){
         ArrayList<String> tmp = new ArrayList();
         tmp.add("\"" + scheduleResult.getString(1) + "\"");
-        tmp.add("\"" + scheduleResult.getString(2).substring(0,5) + "\"");
-        tmp.add("\"" + scheduleResult.getString(3) + "\"");
         schedules.add(tmp);
     }
 
     // (팀장)
-
-    
-
     if(account_rank.equals("leader")){
-        String departmentSql = "SELECT schedule.date, schedule.time, schedule.content, account.name FROM schedule JOIN account ON schedule.account_idx = account.idx WHERE schedule.date BETWEEN ? AND ? AND account.department = ?;";
-        PreparedStatement departmentQuery = connect.prepareStatement(departmentSql);
-        departmentQuery.setString(1, calander.get(0).split("\"")[1]);
-        departmentQuery.setString(2, calander.get(calander.size() - 1).split("\"")[1]);
-        departmentQuery.setString(3, account_department);
-        ResultSet departmentScheduleResult = departmentQuery.executeQuery();
+        String leaderSql = "SELECT schedule.date FROM schedule JOIN account ON schedule.account_idx = account.idx WHERE schedule.date BETWEEN ? AND ? AND account.department = ? AND NOT schedule.account_idx = ?;";
+        PreparedStatement leaderQuery = connect.prepareStatement(leaderSql);
+        leaderQuery.setString(1, calander.get(0).split("\"")[1]);
+        leaderQuery.setString(2, calander.get(calander.size() - 1).split("\"")[1]);
+        leaderQuery.setString(3, account_department);
+        leaderQuery.setString(4, account_idx);
+        ResultSet leaderReuslt = leaderQuery.executeQuery();
         
-        while(departmentScheduleResult.next()){
+        while(leaderReuslt.next()){
             ArrayList<String> tmp = new ArrayList();
-            tmp.add("\"" + departmentScheduleResult.getString(1) + "\"");
-            tmp.add("\"" + departmentScheduleResult.getString(2).substring(0,5) + "\"");
-            tmp.add("\"" + departmentScheduleResult.getString(3) + "\"");
+            tmp.add("\"" + leaderReuslt.getString(1) + "\"");
             departmentSchedules.add(tmp);
         }
     }
 %>
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -232,6 +226,22 @@
 </body>
 
 <script>
+    function getCounts(arr){
+        return arr.reduce(function(prev, cur) {
+            prev[cur] = ++prev[cur] || 1
+            return prev
+        }, {})
+    }
+    // 현재 시간 반환
+    function getCurTime(type){
+        var diff = 1000 * 60 * 60 * 9
+        if (type === "date"){
+            return new Date((new Date()).getTime() + diff).toISOString().slice(0,10)
+        }
+        if (type === "time"){
+            return new Date((new Date()).getTime() + diff).toISOString().slice(11,16)
+        }
+    }
     // 현재 선택된 month checked 출력
     function displayMonthChecked(month){
         var monthObject = {
@@ -255,7 +265,7 @@
         document.getElementById("year").innerText = year + "년"
     }
     // calander 출력
-    function displayCalander(calander, month, schedules, departmentSchedules){
+    function displayCalander(calander, month, today){
         for (var i of calander) {
             var item = document.createElement("div")
             item.className = "scheduler-calander-table-date-item"
@@ -264,35 +274,49 @@
             var day = document.createElement("div")
             day.className = "scheduler-calander-table-date-item-day"
             day.innerText = Number(i.split("-")[2])
-            if(Number(i.split("-")[1]) !== month)
-                day.classList.add("scheduler-calander-table-date-item-outside")
-
             item.appendChild(day)
 
-            if (schedules.filter(a => a[0] === i).length > 0){
-                var count = document.createElement("div")
-                count.className = "scheduler-calander-table-date-item-count"
-                count.innerText = schedules.filter(a => a[0] === i).length + "개의 일정"
-                item.appendChild(count)
+            // 현재 월에 벗어난 월 폰트 색상
+            if(Number(i.split("-")[1]) !== month && i !== today)
+                day.classList.add("scheduler-calander-table-date-item-outside")
+            // 오늘 날짜 스타일
+            if (i === today) {
+                item.classList.add("scheduler-calander-table-date-item-today")
+                day.classList.add("scheduler-calander-table-date-item-day-today")
             }
-            if (departmentSchedules.filter(a => a[0] === i).length > 0){
-                var count = document.createElement("div")
-                count.className = "scheduler-calander-table-date-item-count"
-                count.innerText = departmentSchedules.filter(a => a[0] === i).length + "개의 팀일정"
-                item.appendChild(count)
-            }
-
             document.getElementById("table").appendChild(item)
         }
     }
+    // calander에 rank에 따른 schedule 출력
+    function displayScheduleCounts(schedules) {
+        for (var i in schedules){
+            var count = document.createElement("div")
+            count.className = "scheduler-calander-table-date-item-count"
+            count.innerText = schedules[i] + "개의 일정"
 
-    var calander = <%=calander%>
-    var schedules = <%=schedules%>
-    var departmentSchedules = <%=departmentSchedules%>
-    var diff = 1000 * 60 * 60 * 9
+            var element = document.getElementById(i)
+            element.classList.add("scheduler-calander-table-date-item-clickable")
+            element.appendChild(count)
+        }
+    }
+    function displayDepartmentScheduleCounts(departmentScheduleCounts){
+        for (var i in departmentScheduleCounts){
+            var count = document.createElement("div")
+            count.className = "scheduler-calander-table-date-item-count"
+            count.innerText = departmentScheduleCounts[i] + "개의 팀원일정"
+
+            var element = document.getElementById(i)
+            element.classList.add("scheduler-calander-table-date-item-clickable")
+            element.appendChild(count)
+        }
+    }
+
     var year = <%=year%>
     var month = <%=month%>
-    var monthRadios = document.getElementsByName("month")
+    var rank = <%="\"" + account_rank + "\""%>
+    var calander = <%=calander%>
+    var scheduleCounts = getCounts(<%=schedules%>)
+    var departmentScheduleCounts = getCounts(<%=departmentSchedules%>)
 
     document.getElementById("logoutBtn").addEventListener("click", function() {
         location.href = "/action/actionLogout.jsp"
@@ -302,10 +326,8 @@
     })
     document.getElementById("writeBtn").addEventListener("click", function() {
         document.getElementById("writeModal").classList.remove('unavailable')
-        var koreaCurTime = new Date((new Date()).getTime() + diff).toISOString()
-
-        document.getElementById("writeModalDate").value = koreaCurTime.slice(0,10)
-        document.getElementById("writeModalTime").value = koreaCurTime.slice(11,16)
+        document.getElementById("writeModalDate").value = getCurTime("date")
+        document.getElementById("writeModalTime").value = getCurTime("time")
     })
     document.getElementById("prevYearBtn").addEventListener("click", function() {
         location.href = "scheduler.jsp?year=" + (year - 1).toString() + "&month=" + (month).toString()
@@ -313,15 +335,18 @@
     document.getElementById("nextYearBtn").addEventListener("click", function() {
         location.href = "scheduler.jsp?year=" + (year + 1).toString() + "&month=" + (month).toString()
     })
-    for(var i = 0 ; i < monthRadios.length ; i++){
-        monthRadios[i].addEventListener("click", function(event) {
+    document.getElementsByName("month").forEach(function(btn) {
+        btn.addEventListener("click", function(event) {
             location.href = "scheduler.jsp?year=" + year.toString() + "&month=" + event.target.value
         })
-    }
+    })
 
     displayMonthChecked(month)
     displayYear(year)
-    displayCalander(calander, month, schedules, departmentSchedules)
+    displayCalander(calander, month, getCurTime("date"))
+    displayScheduleCounts(scheduleCounts)
+    if (rank === "leader")
+        displayDepartmentScheduleCounts(departmentScheduleCounts)
 </script>
 
 </html>

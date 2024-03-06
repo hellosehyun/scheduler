@@ -140,22 +140,35 @@
   height: calc(100% / 6);
   display: flex;
   align-items: center;
+  padding: 10px 0;
   justify-content: space-evenly;
   flex-direction: column;
   position: relative;
 }
+.scheduler-calander-table-date-item-today{
+  background-color: var(--color-lightBlue);
+}
 .scheduler-calander-table-date-item-day{
+  pointer-events: none;
   position: absolute;
   top: 0;
-  left: 0;
+  left: 2px;
   font-size: var(--fontSize-tiny);
+}
+.scheduler-calander-table-date-item-day-today{
+  pointer-events: none;
+  color: var(--color-white);
+}
+.scheduler-calander-table-date-item-clickable{
+  cursor: pointer;
 }
 
 .scheduler-calander-table-date-item-count{
+  pointer-events: none;
   color: var(--color-white);
   background-color: var(--color-black);
   border: none;
-  padding: 6px 8px;
+  padding: 6px;
   font-size: var(--fontSize-tiny);
   border-radius: 10px;
 }
@@ -168,5 +181,6 @@
 }
 
 .scheduler-calander-table-date-item-outside {
+  pointer-events: none;
   color: var(--color-gray);
 }

@@ -2,6 +2,18 @@
 
 <%
     request.setCharacterEncoding("utf-8");
+    
+    String account_idx = (String) session.getAttribute("account_idx");
+
+    // 세션 체크
+    if(account_idx == null){
+        out.println("<script>alert('로그인 세션 만료');</script>");
+        out.println("<script>location.href = '/login.jsp'</script>");
+        return;
+    }
+
+    String date = request.getParameter("date");
+    out.println(date);
 %>
 
 <head>

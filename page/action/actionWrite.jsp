@@ -18,6 +18,7 @@
         if(account_idx == null){
             out.println("<script>alert('로그인 세션 만료');</script>");
             out.println("<script>location.href = '/login.jsp'</script>");
+            return;
         }
 
         // 유효성 체크
