@@ -106,44 +106,51 @@
     Connection connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/scheduler", "sehyun", "sehyun6685@");
     
     // 권한, 부서 가져오기
-    ResultSet rankResult = connect.prepareStatement("SELECT rank, department FROM account WHERE idx = " + account_idx).executeQuery();
+    ResultSet rankResult = connect.prepareStatement("SELECT rank, department, name FROM account WHERE idx = " + account_idx).executeQuery();
     rankResult.next();
     String account_rank = rankResult.getString(1);
     String account_department = rankResult.getString(2);
+    String account_name = rankResult.getString(3);
 
     // 날짜 계산
     ArrayList<String> calander = new ArrayList(getCalander(year, month));
     ArrayList<ArrayList<String>> schedules = new ArrayList();
-    ArrayList<ArrayList<String>> departmentSchedules = new ArrayList();
 
     // (팀원)
-    String sql = "SELECT date FROM schedule WHERE account_idx = ? AND date between ? and ?;";
-    PreparedStatement query = connect.prepareStatement(sql);
-    query.setString(1, account_idx);
-    query.setString(2, calander.get(0).split("\"")[1]);
-    query.setString(3, calander.get(calander.size() - 1).split("\"")[1]);
-    ResultSet scheduleResult = query.executeQuery();
+    if(account_rank.equals("member")){
+        String sql = "SELECT schedule.date, schedule.time, schedule.content, account.name FROM schedule JOIN account ON schedule.account_idx = account.idx WHERE account_idx = ? AND date between ? and ?;";
+        PreparedStatement query = connect.prepareStatement(sql);
+        query.setString(1, account_idx);
+        query.setString(2, calander.get(0).split("\"")[1]);
+        query.setString(3, calander.get(calander.size() - 1).split("\"")[1]);
+        ResultSet scheduleResult = query.executeQuery();
 
-    while(scheduleResult.next()){
-        ArrayList<String> tmp = new ArrayList();
-        tmp.add("\"" + scheduleResult.getString(1) + "\"");
-        schedules.add(tmp);
+        while(scheduleResult.next()){
+            ArrayList<String> tmp = new ArrayList();
+            tmp.add("\"" + scheduleResult.getString(1) + "\"");
+            tmp.add("\"" + scheduleResult.getString(2).substring(0,5) + "\"");
+            tmp.add("\"" + scheduleResult.getString(3) + "\"");
+            tmp.add("\"" + scheduleResult.getString(4) + "\"");
+            schedules.add(tmp);
+        }
     }
 
     // (팀장)
-    if(account_rank.equals("leader")){
-        String leaderSql = "SELECT schedule.date FROM schedule JOIN account ON schedule.account_idx = account.idx WHERE schedule.date BETWEEN ? AND ? AND account.department = ? AND NOT schedule.account_idx = ?;";
-        PreparedStatement leaderQuery = connect.prepareStatement(leaderSql);
-        leaderQuery.setString(1, calander.get(0).split("\"")[1]);
-        leaderQuery.setString(2, calander.get(calander.size() - 1).split("\"")[1]);
-        leaderQuery.setString(3, account_department);
-        leaderQuery.setString(4, account_idx);
-        ResultSet leaderReuslt = leaderQuery.executeQuery();
+    if(account_rank.equals("leader")) {
+        String sql = "SELECT schedule.date, schedule.time, schedule.content, account.name FROM schedule JOIN account ON schedule.account_idx = account.idx WHERE schedule.date BETWEEN ? AND ? AND account.department = ?;";
+        PreparedStatement query = connect.prepareStatement(sql);
+        query.setString(1, calander.get(0).split("\"")[1]);
+        query.setString(2, calander.get(calander.size() - 1).split("\"")[1]);
+        query.setString(3, account_department);
+        ResultSet result = query.executeQuery();
         
-        while(leaderReuslt.next()){
+        while(result.next()){
             ArrayList<String> tmp = new ArrayList();
-            tmp.add("\"" + leaderReuslt.getString(1) + "\"");
-            departmentSchedules.add(tmp);
+            tmp.add("\"" + result.getString(1) + "\"");
+            tmp.add("\"" + result.getString(2).substring(0,5) + "\"");
+            tmp.add("\"" + result.getString(3) + "\"");
+            tmp.add("\"" + result.getString(4) + "\"");
+            schedules.add(tmp);
         }
     }
 %>
@@ -166,7 +173,9 @@
         <jsp:include page="/write.jsp"/>
     </div>
     <div id="dateModal" class="scheduler-modal-date unavailable">
-        <jsp:include page="/date.jsp"/>
+        <jsp:include page="/schedule.jsp">
+            <jsp:param name="date" value="1" />
+        </jsp:include>
     </div>
     <div class="scheduler-calander">
         <a href="scheduler.jsp" class="scheduler-calander-title">
@@ -226,11 +235,25 @@
 </body>
 
 <script>
-    function getCounts(arr){
-        return arr.reduce(function(prev, cur) {
-            prev[cur] = ++prev[cur] || 1
-            return prev
-        }, {})
+    function getArrToObj(arr){
+        object = {}
+        for (var i of arr){
+            if(i[0] in object){
+                object[i[0]].push({
+                    time : i[1],
+                    content : i[2],
+                    name : i[3]
+                })
+            }
+            else{
+                object[i[0]] = [{
+                    time : i[1],
+                    content : i[2],
+                    name : i[3]
+                }]
+            }
+        }
+        return object
     }
     // 현재 시간 반환
     function getCurTime(type){
@@ -288,26 +311,44 @@
         }
     }
     // calander에 rank에 따른 schedule 출력
-    function displayScheduleCounts(schedules) {
+    function displaySchedule(schedules) {
         for (var i in schedules){
-            var count = document.createElement("div")
-            count.className = "scheduler-calander-table-date-item-count"
-            count.innerText = schedules[i] + "개의 일정"
-
+            var myCount = Object.values(schedules[i]).length
             var element = document.getElementById(i)
+            
+            var node = document.createElement("div")
+            node.className = "scheduler-calander-table-date-item-count"
+            node.innerText = myCount + "개의 일정"
+            element.appendChild(node)
+
             element.classList.add("scheduler-calander-table-date-item-clickable")
-            element.appendChild(count)
+            element.addEventListener("click", function() {
+                
+            })
         }
     }
-    function displayDepartmentScheduleCounts(departmentScheduleCounts){
-        for (var i in departmentScheduleCounts){
-            var count = document.createElement("div")
-            count.className = "scheduler-calander-table-date-item-count"
-            count.innerText = departmentScheduleCounts[i] + "개의 팀원일정"
-
+    function displayLeaderSchedule(schedules, name){
+        for (var i in schedules){
+            var myCount = Object.values(schedules[i]).filter((k) => k.name === name).length
+            var departmentCount = Object.values(schedules[i]).filter((k) => k.name !== name).length
             var element = document.getElementById(i)
+
+            var node = document.createElement("div")
+            node.className = "scheduler-calander-table-date-item-count"
+            node.innerText = myCount + "개의 일정"
+            element.appendChild(node)
+
+            if(departmentCount > 0){
+                var node2 = document.createElement("div")
+                node2.className = "scheduler-calander-table-date-item-count"
+                node2.innerText = departmentCount + "개의 팀원일정"
+                element.appendChild(node2)
+            }
+
             element.classList.add("scheduler-calander-table-date-item-clickable")
-            element.appendChild(count)
+            element.addEventListener("click", function() {
+                
+            })
         }
     }
 
@@ -315,8 +356,9 @@
     var month = <%=month%>
     var rank = <%="\"" + account_rank + "\""%>
     var calander = <%=calander%>
-    var scheduleCounts = getCounts(<%=schedules%>)
-    var departmentScheduleCounts = getCounts(<%=departmentSchedules%>)
+    var schedules = getArrToObj(<%=schedules%>)
+    var name = <%="\"" + account_name + "\""%>
+    console.log(schedules)
 
     document.getElementById("logoutBtn").addEventListener("click", function() {
         location.href = "/action/actionLogout.jsp"
@@ -344,9 +386,7 @@
     displayMonthChecked(month)
     displayYear(year)
     displayCalander(calander, month, getCurTime("date"))
-    displayScheduleCounts(scheduleCounts)
-    if (rank === "leader")
-        displayDepartmentScheduleCounts(departmentScheduleCounts)
+    rank === "leader" ? displayLeaderSchedule(schedules,name) :displaySchedule(schedules)
 </script>
 
 </html>

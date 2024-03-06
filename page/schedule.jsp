@@ -11,13 +11,10 @@
         out.println("<script>location.href = '/login.jsp'</script>");
         return;
     }
-
-    String date = request.getParameter("date");
-    out.println(date);
 %>
 
 <head>
-    <link rel="stylesheet" href="../style/date.css">
+    <link rel="stylesheet" href="../style/schedule.css">
 </head>
 
 <div class="date-body">
@@ -68,5 +65,3 @@
         <button class="date-box-cancel">닫기</button>
     </div>
 </div>
-
-</html>
