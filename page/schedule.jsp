@@ -19,10 +19,10 @@
 
 <div class="schedule-body">
     <div class="schedule-box">
-        <div class="schedule-box-title">
+        <div class="schedule-box-title" id="scheduleDate">
             2022년 3월 1일 일정
         </div>
-        <div class="schedule-box-list">
+        <div class="schedule-box-list" id="scheduleList">
             <div class="schedule-box-list-item">
                 <!-- <div class="schedule-box-list-item-time">오전 12 : 30</div>
                 <div class="schedule-box-list-item-content">회의</div>
@@ -43,7 +43,10 @@
                 </div>
             </div>
             <div class="schedule-box-list-item">
-                <div class="schedule-box-list-item-time">오전 12 : 30</div>
+                <div class="schedule-box-list-item-detail">
+                    <div class="schedule-box-list-item-detail-item">오전 12 : 30</div>
+                    <div class="schedule-box-list-item-detail-item">오전 12 : 30</div>
+                </div>
                 <div class="schedule-box-list-item-content">회의</div>
                 <div class="schedule-box-list-item-manage">
                     <button class="schedule-box-list-item-manage-edit">수정</button>
@@ -62,6 +65,14 @@
                 </div> -->
             </div>
         </div>
-        <button class="schedule-box-cancel">닫기</button>
+        <button class="schedule-box-cancel" id="scheduleModalCancel">닫기</button>
     </div>
 </div>
+
+<script>
+    document.getElementById("scheduleModalCancel").addEventListener("click", function(event){
+        event.preventDefault();
+        document.getElementById("scheduleModal").classList.add('unavailable')
+        document.getElementById("scheduleList").replaceChildren()
+    })
+</script>

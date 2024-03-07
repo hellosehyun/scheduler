@@ -251,6 +251,19 @@
                 }]
             }
         }
+        
+        Object.values(object).forEach(i => i.sort(function(a, b) {
+            const timeA = new Date("2022-01-01 " + a.time);
+            const timeB = new Date("2022-01-01 " + b.time);
+
+            if (timeA < timeB) {
+                return -1;
+            }
+            if (timeA > timeB) {
+                return 1;
+            }
+            return 0; 
+        }))
         return object
     }
     // 현재 시간 반환
@@ -322,7 +335,6 @@
             element.classList.add("scheduler-calander-table-date-item-clickable")
             element.addEventListener("click", function() {
                 document.getElementById("scheduleModal").classList.remove("available");
-                console.log(1)
             })
         }
     }
@@ -332,11 +344,12 @@
             var departmentCount = Object.values(schedules[i]).filter((k) => k.name !== name).length
             var element = document.getElementById(i)
 
-            var node = document.createElement("div")
-            node.className = "scheduler-calander-table-date-item-count"
-            node.innerText = myCount + "개의 일정"
-            element.appendChild(node)
-
+            if(myCount > 0) {
+                var node = document.createElement("div")
+                node.className = "scheduler-calander-table-date-item-count"
+                node.innerText = myCount + "개의 일정"
+                element.appendChild(node)
+            }
             if(departmentCount > 0){
                 var node2 = document.createElement("div")
                 node2.className = "scheduler-calander-table-date-item-count"
@@ -345,9 +358,39 @@
             }
 
             element.classList.add("scheduler-calander-table-date-item-clickable")
-            element.addEventListener("click", function() {
-                document.getElementById("scheduleModal").classList.remove("unavailable")
-            })
+        }
+    }
+    function displayScheduleModal(date) {
+        document.getElementById("scheduleDate").innerText = date.split("-")[0] + "년 " + date.split("-")[1] + "월 " + date.split("-")[2] + "일 일정"
+        document.getElementById("scheduleModal").classList.remove('unavailable')
+        document.getElementById("scheduleList").replaceChildren()
+
+        for (var i of schedules[date]){
+            var node = document.createElement("div")
+            node.className = "schedule-box-list-item"
+
+            var node2 = document.createElement("div")
+            node2.className = "schedule-box-list-item-detail"
+
+            var node3 = document.createElement("div")
+            node3.className = "schedule-box-list-item-detail-item"
+            node3.innerText = i.time
+            node2.appendChild(node3)
+
+            if(name !== i.name){ // 본인이 아닌 팀원 일정
+                var node4 = document.createElement("div")
+                node4.className = "schedule-box-list-item-detail-item"
+                node4.innerText = i.name
+                node2.appendChild(node4)
+            }
+
+            var node5 = document.createElement("div")
+            node5.className = "schedule-box-list-item-content"
+            node5.innerText = i.content
+
+            node.append(node2, node5)
+
+            document.getElementById("scheduleList").appendChild(node)
         }
     }
 
@@ -358,6 +401,11 @@
     var schedules = getArrToObj(<%=schedules%>)
     var name = <%="\"" + account_name + "\""%>
     console.log(schedules)
+
+    displayMonthChecked(month)
+    displayYear(year)
+    displayCalander(calander, month, getCurTime("date"))
+    rank === "leader" ? displayLeaderSchedule(schedules,name) : displaySchedule(schedules)
 
     document.getElementById("logoutBtn").addEventListener("click", function() {
         location.href = "/action/actionLogout.jsp"
@@ -381,11 +429,11 @@
             location.href = "scheduler.jsp?year=" + year.toString() + "&month=" + event.target.value
         })
     })
-
-    displayMonthChecked(month)
-    displayYear(year)
-    displayCalander(calander, month, getCurTime("date"))
-    rank === "leader" ? displayLeaderSchedule(schedules,name) :displaySchedule(schedules)
+    Array.from(document.getElementsByClassName("scheduler-calander-table-date-item-clickable")).forEach(function(btn) {
+        btn.addEventListener("click", function() {
+            displayScheduleModal(btn.id)
+        })
+    })
 </script>
 
 </html>
