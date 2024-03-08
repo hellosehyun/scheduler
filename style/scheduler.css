@@ -85,10 +85,14 @@
   width: 100%;
   display: flex;
   justify-content: space-between;
-  font-size: var(--fontSize-medium);
 }
-
-.scheduler-calander-month-btn:checked + label {
+.scheduler-calander-month-btn {
+  border:none;
+  background-color: transparent;
+  font-size: var(--fontSize-medium);
+  cursor: pointer;
+}
+.scheduler-calander-month-btn-checked {
   color: var(--color-lightBlue);
 }
 

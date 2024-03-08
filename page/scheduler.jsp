@@ -9,8 +9,8 @@
 <%@ page import="java.util.Arrays" %>
 <%@ page import="java.time.LocalDate" %>
 
-<%! // function
-    public Integer getMonthDay(Integer year, Integer month) {
+<%!
+    public Integer getMonthDay(Integer year, Integer month) { // 해당 year 과 month의 일 수 반환
         List<Integer> case1 = Arrays.asList(1,3,5,7,8,10,12);
         List<Integer> case2 = Arrays.asList(4,6,9,11);
 
@@ -25,7 +25,6 @@
                 return 28;
         }
     }
-
     public Integer getFirstDay(Integer year, Integer month) { // 해당 year과 month의 1일의 index 반환
         Integer sum = 0;
 
@@ -42,7 +41,6 @@
         }
         return first % 7;
     }
-
     public ArrayList getCalander(Integer year, Integer month) {
         Integer monthDay = getMonthDay(year, month);
         Integer firstDay = getFirstDay(year, month);
@@ -173,31 +171,7 @@
             <span class="scheduler-calander-year-number" id="year"></span>
             <button id="nextYearBtn" class="scheduler-calander-year-btn">&gt;</button>
         </div>
-        <div class="scheduler-calander-month">
-            <input class="scheduler-calander-month-btn" type="radio" name="month" value="1" id="january" style="display: none;">
-            <label for="january">1월</label>
-            <input class="scheduler-calander-month-btn" type="radio" name="month" value="2"  id="february" style="display: none;">
-            <label for="february">2월</label>
-            <input class="scheduler-calander-month-btn" type="radio" name="month" value="3"  id="march" style="display: none;">
-            <label for="march">3월</label>
-            <input class="scheduler-calander-month-btn" type="radio" name="month" value="4"  id="april" style="display: none;">
-            <label for="april">4월</label>
-            <input class="scheduler-calander-month-btn" type="radio" name="month" value="5"  id="may" style="display: none;">
-            <label for="may">5월</label>
-            <input class="scheduler-calander-month-btn" type="radio" name="month" value="6"  id="june" style="display: none;">
-            <label for="june">6월</label>
-            <input class="scheduler-calander-month-btn" type="radio" name="month" value="7"  id="july" style="display: none;">
-            <label for="july">7월</label>
-            <input class="scheduler-calander-month-btn" type="radio" name="month" value="8"  id="august" style="display: none;">
-            <label for="august">8월</label>
-            <input class="scheduler-calander-month-btn" type="radio" name="month" value="9"  id="september" style="display: none;">
-            <label for="september">9월</label>
-            <input class="scheduler-calander-month-btn" type="radio" name="month" value="10"  id="october" style="display: none;">
-            <label for="october">10월</label>
-            <input class="scheduler-calander-month-btn" type="radio" name="month" value="11"  id="november" style="display: none;">
-            <label for="november">11월</label>
-            <input class="scheduler-calander-month-btn" type="radio" name="month" value="12"  id="december" style="display: none;">
-            <label for="december">12월</label>
+        <div class="scheduler-calander-month" id="month">
         </div>
                 
         <div class="scheduler-calander-table">
@@ -232,22 +206,20 @@
             return new Date((new Date()).getTime() + diff).toISOString().slice(11,16)
         }
     }
-    function displayMonthChecked(month){
-        var monthObject = {
-            1: 'january',
-            2: 'february',
-            3: 'march',
-            4: 'april',
-            5: 'may',
-            6: 'june',
-            7: 'july',
-            8: 'august',
-            9: 'september',
-            10: 'october',
-            11: 'november',
-            12: 'december'
-        };
-        document.getElementById(monthObject[month]).checked = true
+    function displayMonthBtn(year, month){
+        for(var i = 1 ; i <= 12 ; i++){
+            var node = document.createElement("button")
+            node.className = "scheduler-calander-month-btn"
+            node.innerText = i + "월"
+            node.value = i
+            if (i === month){
+                node.classList.add("scheduler-calander-month-btn-checked")
+            }
+            node.addEventListener("click", function(event) {
+                location.href = "scheduler.jsp?year=" + year.toString() + "&month=" + event.target.value
+            })
+            document.getElementById("month").appendChild(node)
+        }
     }
     function displayYear(year){
         document.getElementById("year").innerText = year + "년"
@@ -310,7 +282,7 @@
     var schedulesCount = getCount(<%=schedules%>)
     var departmentSchedulesCount = getCount(<%=departmentSchedules%>)
 
-    displayMonthChecked(month)
+    displayMonthBtn(year, month)
     displayYear(year)
     displayCalander(calander, month, getCurTime("date"))
     displaySchedulesCount(schedulesCount)
@@ -331,11 +303,6 @@
     })
     document.getElementById("nextYearBtn").addEventListener("click", function() {
         location.href = "scheduler.jsp?year=" + (year + 1).toString() + "&month=" + (month).toString()
-    })
-    document.getElementsByName("month").forEach(function(btn) {
-        btn.addEventListener("click", function(event) {
-            location.href = "scheduler.jsp?year=" + year.toString() + "&month=" + event.target.value
-        })
     })
     Array.from(document.getElementsByClassName("scheduler-calander-table-date-item-clickable")).forEach((btn) => {btn.addEventListener("click", function(event) {
         document.getElementById("modal").src = "schedule.jsp?date=" + event.target.id

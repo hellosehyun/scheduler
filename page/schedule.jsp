@@ -95,7 +95,6 @@
         var names = Array.from(new Set(departmentSchedules.map((i) => i.name)))
 
         for (var i = 0 ; i < names.length ; i++){
-            console.log(names[i])
             colorTable[names[i]] = colors[i]
         }
         return colorTable
@@ -143,7 +142,6 @@
         var node = document.createElement("div")
         node.className = "schedule-box-list-item"
         node.style.backgroundColor = colorTable[schedule.name]
-        console.log(colorTable[schedule.name])
         
         var node2 = document.createElement("div")
         node2.className = "schedule-box-list-item-detail"
@@ -212,7 +210,6 @@
         return node
     }
     function displaySchedules(nodes) {
-        document.getElementById("scheduleList").replaceChildren()
         nodes.sort(function(a,b) {
             var timeA = new Date("2000-01-01 " + a.getElementsByClassName("schedule-box-list-item-detail-item")[0].innerText)
             var timeB = new Date("2000-01-01 " + b.getElementsByClassName("schedule-box-list-item-detail-item")[0].innerText)
