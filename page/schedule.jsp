@@ -107,7 +107,8 @@
         node2.className = "schedule-box-list-item-detail"
         var node3 = document.createElement("div")
         node3.className = "schedule-box-list-item-detail-item"
-        node3.innerText = schedule.time
+        node3.value = schedule.time
+        node3.innerText = Number(schedule.time.split(":")[0]) >= 12 ? "오후 " + ((Number(schedule.time.split(":")[0]) - 12) || 12).toString().padStart(2,"0") + ":" + schedule.time.split(":")[1] : "오전 " + schedule.time
         node2.appendChild(node3)
 
         var node4 = document.createElement("div")
@@ -147,7 +148,8 @@
         node2.className = "schedule-box-list-item-detail"
         var node3 = document.createElement("div")
         node3.className = "schedule-box-list-item-detail-item"
-        node3.innerText = schedule.time
+        node3.value = schedule.time
+        node3.innerText = Number(schedule.time.split(":")[0]) >= 12 ? "오후 " + ((Number(schedule.time.split(":")[0]) - 12) || 12).toString().padStart(2,"0") + ":" + schedule.time.split(":")[1] : "오전 " + schedule.time
         var node4 = document.createElement("div")
         node4.className = "schedule-box-list-item-detail-item"
         node4.innerText = schedule.name
@@ -211,8 +213,8 @@
     }
     function displaySchedules(nodes) {
         nodes.sort(function(a,b) {
-            var timeA = new Date("2000-01-01 " + a.getElementsByClassName("schedule-box-list-item-detail-item")[0].innerText)
-            var timeB = new Date("2000-01-01 " + b.getElementsByClassName("schedule-box-list-item-detail-item")[0].innerText)
+            var timeA = new Date("2000-01-01 " + a.getElementsByClassName("schedule-box-list-item-detail-item")[0].value)
+            var timeB = new Date("2000-01-01 " + b.getElementsByClassName("schedule-box-list-item-detail-item")[0].value)
 
             if(timeA > timeB)
                 return 1
