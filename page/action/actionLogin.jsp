@@ -12,11 +12,11 @@
         String id = request.getParameter("id"); 
         String pw = request.getParameter("pw");
 
-        if(id.length() <= 0){
-            throw new Exception("haha");
+        if(!id.matches("^[^\\s]+$")){
+            throw new Exception("아이디 입력 필수");
         }
-        if(pw.length() <= 0){
-            throw new Exception("hahaadssd");
+        if(!pw.matches("^[^\\s]+$")){
+            throw new Exception("비밀번호 입력 필수");
         }
 
         // 데이테베이스 연결

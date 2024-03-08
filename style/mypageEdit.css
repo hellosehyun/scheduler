@@ -41,6 +41,7 @@
   font-size: var(--fontSize-small);
   border-radius: 10px;
   margin-left: 10px;
+  cursor: pointer;
 }
 
 .mypageEdit-box-subtitle {
@@ -100,6 +101,7 @@
   background-color: var(--color-whiteGray);
   font-size: var(--fontSize-medium);
   padding: 15px;
+  cursor: pointer;
   border-radius: 10px;
 }
 
@@ -111,4 +113,5 @@
   padding: 15px;
   font-size: var(--fontSize-medium);
   border-radius: 10px;
+  cursor: pointer;
 }

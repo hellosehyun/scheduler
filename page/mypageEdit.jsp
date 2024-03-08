@@ -1,5 +1,36 @@
 <%@ page language="java" contentType="text/html" pageEncoding="utf-8" %>
 
+<%@ page import="java.sql.DriverManager" %>
+<%@ page import="java.sql.Connection" %>
+<%@ page import="java.sql.PreparedStatement" %>
+<%@ page import="java.sql.ResultSet" %>
+
+
+<%
+    request.setCharacterEncoding("utf-8");
+
+    String account_idx = (String) session.getAttribute("account_idx");
+
+    // 세션 체크
+    if(account_idx == null){
+        out.println("<script>alert('로그인 세션 만료');</script>");
+        out.println("<script>location.href = '/login.jsp'</script>");
+        return;
+    }
+
+    // 데이테베이스 연결
+    Class.forName("com.mysql.jdbc.Driver");
+    Connection connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/scheduler", "sehyun", "sehyun6685@");
+    
+    // 내 정보 가져오기
+    ResultSet result = connect.prepareStatement("SELECT name, email, rank, department FROM account WHERE idx = " + account_idx).executeQuery();
+    result.next();
+    String info = "{";
+    info += "name" + ":" + "\"" + result.getString(1) + "\"" + ",";
+    info += "email" + ":" + "\"" + result.getString(2) + "\"" + ",";
+    info += "rank" + ":" + "\"" + result.getString(3) + "\"" + ",";
+    info += "department" + ":" + "\"" + result.getString(4) + "\"" + "}";
+%>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -13,49 +44,46 @@
 
 <body class="mypageEdit-body">
     <div class="mypageEdit-box">
-        <h1 class="mypageEdit-box-title">
+        <a href="/scheduler.jsp" class="mypageEdit-box-title">
             <span>스케</span><span class="mypageEdit-box-title-lightBlue">줄러</span>
-        </h1>
-        <a class="mypageEdit-box-back">스케줄러 페이지로 돌아가기</a>
+        </a>
+        <button id="back" class="mypageEdit-box-back">스케줄러 페이지로 돌아가기</button>
         <div class="mypageEdit-box-subtitle">내 정보</div>
-        <div class="mypageEdit-box-info">
+        <form id="form" class="mypageEdit-box-info" action="/action/actionEditAccount.jsp">
             <div class="mypageEdit-box-info-item">
                 <div class="mypageEdit-box-info-item-left">
                     이름
                 </div>
-                <input placeholder="이름을 입력해주세요" class="mypageEdit-box-info-item-right" type="text">
+                <input id="name" placeholder="이름을 입력해주세요" name="name" class="mypageEdit-box-info-item-right" type="text">
             </div>
             <div class="mypageEdit-box-info-item">
                 <div class="mypageEdit-box-info-item-left">
                     이메일
                 </div>
-                <input placeholder="이메일을 입력해주세요" type="email" class="mypageEdit-box-info-item-right">
+                <input id="email" placeholder="이메일을 입력해주세요" name="email" type="email" class="mypageEdit-box-info-item-right">
             </div>
             <div class="mypageEdit-box-info-item">
                 <div class="mypageEdit-box-info-item-left">
                     비밀번호
                 </div>
-                <input placeholder="비밀번호를 입력해주세요" class="mypageEdit-box-info-item-right" type="password">
+                <input id="pw" placeholder="비밀번호를 입력해주세요" class="mypageEdit-box-info-item-right" name="pw" type="password">
             </div>
             <div class="mypageEdit-box-info-item">
                 <div class="mypageEdit-box-info-item-left">
                     비밀번호 확인
                 </div>
-                <input placeholder="비밀번호를 다시 입력해주세요" class="mypageEdit-box-info-item-right" type="password">
+                <input id="pwConfirm" name="pwConfirm" placeholder="비밀번호를 다시 입력해주세요" class="mypageEdit-box-info-item-right" type="password">
             </div>
             <div class="mypageEdit-box-info-item">
                 <div class="mypageEdit-box-info-item-left">
                     부서
                 </div>
-                <select class="mypageEdit-box-info-item-right" name="" id="">
-                    <option class="mypageEdit-box-info-item-right-default" disabled selected>
-                        직급을 선택해주세요
+                <select class="mypageEdit-box-info-item-right" name="department" id="department">
+                    <option value="design">
+                        디자인팀
                     </option>
-                    <option>
-                        팀원
-                    </option>
-                    <option>
-                        팀장
+                    <option value="plan">
+                        기획팀
                     </option>
                 </select>
             </div>
@@ -63,24 +91,85 @@
                 <div class="mypageEdit-box-info-item-left">
                     직급
                 </div>
-                <select class="mypageEdit-box-info-item-right" name="" id="">
-                    <option class="mypageEdit-box-info-item-right-default" disabled selected>
-                        직급을 선택해주세요
-                    </option>
-                    <option>
+                <select class="mypageEdit-box-info-item-right" name="rank" id="rank">
+                    <option value="member">
                         팀원
                     </option>
-                    <option>
+                    <option value="leader">
                         팀장
                     </option>
                 </select>
             </div>
-        </div>
+        </form>
         <div class="mypageEdit-box-manage">
-            <button class="mypageEdit-box-manage-cancel">취소</button>
-            <button class="mypageEdit-box-manage-save">저장</button>
+            <button class="mypageEdit-box-manage-cancel" id="cancel">취소</button>
+            <button class="mypageEdit-box-manage-save" id="submit">저장</button>
         </div>
     </div>
 </body>
+
+<script>
+    function validateData(pw, pwConfirm, email, name, department, rank) {
+        var pwRegex = /^[a-zA-Z0-9!@#$%^&*()_+{}\[\]:;<>,.?~\\/\-=|]{4,20}$/
+        var emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,30}$/
+        var nameRegex = /^[a-zA-Z가-힣]{1,10}$/
+
+        if(!pwRegex.test(pw)){
+            alert("유효하지 않은 비밀번호")
+            return false
+        }
+        if(pw !== pwConfirm){
+            alert("비밀번호 불일치")
+            return false
+        }
+        if(!emailRegex.test(email)){
+            alert("유효하지 않은 이메일")
+            return false
+        }
+        if(!nameRegex.test(name)){
+            alert("유효하지 않은 이름")
+            return false
+        }
+        if(!['design', 'plan'].includes(department)){
+            alert("유효하지 않은 부서")
+            return false
+        }
+        if(!['leader', 'member'].includes(rank)){
+            alert("유효하지 않은 직급")
+            return false
+        }
+        return true
+    }
+
+    var info = <%=info%>
+
+    document.getElementById("name").value = info.name
+    document.getElementById("email").value = info.email
+    document.getElementById("department").options.selectedIndex = Array.from(document.getElementById("department").children).findIndex((i) => i.value === info.department)
+    document.getElementById("rank").options.selectedIndex = Array.from(document.getElementById("rank").children).findIndex((i) => i.value === info.rank)
+
+    document.getElementById("back").addEventListener("click", function(event) {
+        event.preventDefault();
+        location.href = "/scheduler.jsp"
+    })
+    document.getElementById("submit").addEventListener("click", function(event) {
+        event.preventDefault();
+        
+        var pw = document.getElementById("pw").value
+        var pwConfirm = document.getElementById("pwConfirm").value
+        var email = document.getElementById("email").value
+        var name = document.getElementById("name").value
+        var department = document.getElementById("department").value
+        var rank = document.getElementById("rank").value
+
+        if(validateData(pw, pwConfirm, email, name, department, rank)){
+            document.getElementById("form").submit()
+        }
+    })
+    document.getElementById("cancel").addEventListener("click", function(event) {
+        event.preventDefault();
+        history.back()
+    })
+</script>
 
 </html>

@@ -45,9 +45,8 @@
   background-color: var(--color-white);
   border-radius: 10px;
 }
-.register-form-select-default {
-  color: var(--color-black);
-  display: none;
+.register-form-select:required:invalid{
+  color: var(--color-lightGray);
 }
 
 .register-form-submit {

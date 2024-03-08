@@ -158,7 +158,7 @@
     <iframe src="#" class="scheduler-modal unavailable" id="modal">
     </iframe>
     <div class="scheduler-calander">
-        <a href="scheduler.jsp" class="scheduler-calander-title">
+        <a href="/scheduler.jsp" class="scheduler-calander-title">
             <span>스케</span><span class="scheduler-calander-title-lightBlue">줄러</span>
         </a>
         <nav class="scheduler-calander-nav">

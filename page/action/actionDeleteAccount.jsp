@@ -8,7 +8,6 @@
     try{
         request.setCharacterEncoding("utf-8");
 
-        String schedule_idx = request.getParameter("idx");
         String account_idx = (String) session.getAttribute("account_idx");
 
         // 세션 체크
@@ -22,15 +21,12 @@
         Class.forName("com.mysql.jdbc.Driver");
         Connection connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/scheduler", "sehyun", "sehyun6685@");
 
-        // schedule의 account_idx 와 session의 account_idx 비교 및 데이터 추가
-        String sql = "DELETE FROM schedule WHERE account_idx = ? AND idx = ?";
-        PreparedStatement query = connect.prepareStatement(sql);
-        query.setString(1, account_idx);
-        query.setString(2, schedule_idx);
-        query.executeUpdate();
+        // 계정, 세션 삭제
+        connect.prepareStatement("DELETE FROM account WHERE idx = " + account_idx).executeUpdate();
+        session.invalidate();
 
         // 페이지 이동
-        out.println("<script>location.href = '/scheduler.jsp'</script>");
+        out.println("<script>location.href = '/login.jsp'</script>");
     } catch (Exception error) {
         out.println("<script>alert('" + error.getMessage() + "');</script>");
         out.println("<script>history.back()</script>");

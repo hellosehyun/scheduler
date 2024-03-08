@@ -12,33 +12,53 @@
 </head>
 
 <body class="find-body">
-    <form class="find-form" action="">
+    <div class="find-form">
         <div class="find-form-title">
             비밀번호 찾기
         </div>
-        <input class="find-form-input" placeholder="이메일을 입력해주세요" type="text">
-        <input class="find-form-input" placeholder="아이디를 입력해주세요" type="password">
+        <input id="email" class="find-form-input" placeholder="이메일을 입력해주세요" type="text">
+        <input id="id" class="find-form-input" placeholder="아이디를 입력해주세요" type="text">
         <div class="find-form-box">
-            <a class="find-form-box-find" href="findId.jsp">
+            <a class="find-form-box-find" href="/findId.jsp">
                 아이디 찾기
             </a>
-            <button class="find-form-box-cancel" id="cancelBtn">
+            <button class="find-form-box-cancel" id="cancel">
                 취소
             </button>
-            <button class="find-form-box-submit" type="submit">
+            <button class="find-form-box-submit" id="submit">
                 검색
             </button>
         </div>
         <div class="find-form-line"></div>
-        <a class="find-form-register" href="register.jsp">
+        <a class="find-form-register" href="/register.jsp">
             회원가입
         </a>
-    </form>
+    </div>
 </body>
 <script>
-    document.getElementById("cancelBtn").addEventListener("click", function(event) {
-        event.preventDefault()
-        location.href = "login.jsp"
+    function validateData(email, id) {
+        var regex = /^[^\s]+$/
+
+        if(!regex.test(email)){
+            alert("이메일 입력 필수")
+            return false
+        }
+        if(!regex.test(id)){
+            alert("아이디 입력 필수")
+            return false
+        }
+        return true
+    }
+    document.getElementById("cancel").addEventListener("click", function(event) {
+        location.href = "/login.jsp"
+    })
+    document.getElementById("submit").addEventListener("click", function(event) {
+        var email = document.getElementById("email").value
+        var id = document.getElementById("id").value
+
+        if(validateData(email, id)){
+            location.href = "/action/actionFindPw.jsp?email=" + email + "&id=" + id
+        }
     })
 </script>
 

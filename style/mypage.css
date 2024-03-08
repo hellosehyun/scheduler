@@ -41,6 +41,7 @@
   font-size: var(--fontSize-small);
   border-radius: 10px;
   margin-left: 10px;
+  cursor: pointer;
 }
 
 .mypage-box-subtitle {
@@ -95,6 +96,7 @@
   padding: 15px;
   font-size: var(--fontSize-medium);
   border-radius: 10px;
+  cursor: pointer;
 }
 
 .mypage-box-manage-edit {
@@ -105,4 +107,5 @@
   padding: 15px;
   font-size: var(--fontSize-medium);
   border-radius: 10px;
+  cursor: pointer;
 }
