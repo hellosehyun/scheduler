@@ -106,55 +106,43 @@
     Connection connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/scheduler", "sehyun", "sehyun6685@");
     
     // 권한, 부서 가져오기
-    ResultSet rankResult = connect.prepareStatement("SELECT rank, department, name FROM account WHERE idx = " + account_idx).executeQuery();
-    rankResult.next();
-    String account_rank = rankResult.getString(1);
-    String account_department = rankResult.getString(2);
-    String account_name = rankResult.getString(3);
+    ResultSet result = connect.prepareStatement("SELECT rank, department FROM account WHERE idx = " + account_idx).executeQuery();
+    result.next();
+    String account_rank = result.getString(1);
+    String account_department = result.getString(2);
 
     // 날짜 계산
     ArrayList<String> calander = new ArrayList(getCalander(year, month));
-    ArrayList<ArrayList<String>> schedules = new ArrayList();
+    ArrayList<String> schedules = new ArrayList();
+    ArrayList<String> departmentSchedules = new ArrayList();
 
-    // (팀원)
-    if(account_rank.equals("member")){
-        String sql = "SELECT schedule.date, schedule.time, schedule.content, account.name FROM schedule JOIN account ON schedule.account_idx = account.idx WHERE account_idx = ? AND date between ? and ?;";
-        PreparedStatement query = connect.prepareStatement(sql);
-        query.setString(1, account_idx);
-        query.setString(2, calander.get(0).split("\"")[1]);
-        query.setString(3, calander.get(calander.size() - 1).split("\"")[1]);
-        ResultSet scheduleResult = query.executeQuery();
+    // 본인 스케줄
+    String sql2 = "SELECT date FROM schedule WHERE account_idx = ? AND date between ? and ?;";
+    PreparedStatement query2 = connect.prepareStatement(sql2);
+    query2.setString(1, account_idx);
+    query2.setString(2, calander.get(0).split("\"")[1]);
+    query2.setString(3, calander.get(calander.size() - 1).split("\"")[1]);
+    ResultSet result2 = query2.executeQuery();
 
-        while(scheduleResult.next()){
-            ArrayList<String> tmp = new ArrayList();
-            tmp.add("\"" + scheduleResult.getString(1) + "\"");
-            tmp.add("\"" + scheduleResult.getString(2).substring(0,5) + "\"");
-            tmp.add("\"" + scheduleResult.getString(3) + "\"");
-            tmp.add("\"" + scheduleResult.getString(4) + "\"");
-            schedules.add(tmp);
-        }
+    while(result2.next()){
+        schedules.add("\"" + result2.getString(1) + "\"");
     }
 
     // (팀장)
     if(account_rank.equals("leader")) {
-        String sql = "SELECT schedule.date, schedule.time, schedule.content, account.name FROM schedule JOIN account ON schedule.account_idx = account.idx WHERE schedule.date BETWEEN ? AND ? AND account.department = ?;";
-        PreparedStatement query = connect.prepareStatement(sql);
-        query.setString(1, calander.get(0).split("\"")[1]);
-        query.setString(2, calander.get(calander.size() - 1).split("\"")[1]);
-        query.setString(3, account_department);
-        ResultSet result = query.executeQuery();
+        String sql3 = "SELECT schedule.date FROM schedule JOIN account ON schedule.account_idx = account.idx WHERE schedule.date BETWEEN ? AND ? AND account.department = ? AND NOT schedule.account_idx = ?";
+        PreparedStatement query3 = connect.prepareStatement(sql3);
+        query3.setString(1, calander.get(0).split("\"")[1]);
+        query3.setString(2, calander.get(calander.size() - 1).split("\"")[1]);
+        query3.setString(3, account_department);
+        query3.setString(4, account_idx);
+        ResultSet result3 = query3.executeQuery();
         
-        while(result.next()){
-            ArrayList<String> tmp = new ArrayList();
-            tmp.add("\"" + result.getString(1) + "\"");
-            tmp.add("\"" + result.getString(2).substring(0,5) + "\"");
-            tmp.add("\"" + result.getString(3) + "\"");
-            tmp.add("\"" + result.getString(4) + "\"");
-            schedules.add(tmp);
+        while(result3.next()){
+            departmentSchedules.add("\"" + result3.getString(1) + "\"");
         }
     }
 %>
-
 
 
 <!DOCTYPE html>
@@ -169,12 +157,8 @@
 </head>
 
 <body>
-    <div id="writeModal" class="scheduler-modal-write unavailable">
-        <jsp:include page="/write.jsp"/>
-    </div>
-    <div id="scheduleModal" class="scheduler-modal-schedule unavailable">
-        <jsp:include page="/schedule.jsp"/>
-    </div>
+    <iframe src="#" class="scheduler-modal unavailable" id="modal">
+    </iframe>
     <div class="scheduler-calander">
         <a href="scheduler.jsp" class="scheduler-calander-title">
             <span>스케</span><span class="scheduler-calander-title-lightBlue">줄러</span>
@@ -233,40 +217,12 @@
 </body>
 
 <script>
-    function getArrToObj(arr){
-        object = {}
-        for (var i of arr){
-            if(i[0] in object){
-                object[i[0]].push({
-                    time : i[1],
-                    content : i[2],
-                    name : i[3]
-                })
-            }
-            else{
-                object[i[0]] = [{
-                    time : i[1],
-                    content : i[2],
-                    name : i[3]
-                }]
-            }
-        }
-        
-        Object.values(object).forEach(i => i.sort(function(a, b) {
-            const timeA = new Date("2022-01-01 " + a.time);
-            const timeB = new Date("2022-01-01 " + b.time);
-
-            if (timeA < timeB) {
-                return -1;
-            }
-            if (timeA > timeB) {
-                return 1;
-            }
-            return 0; 
-        }))
-        return object
+    function getCount(arr) {
+        return arr.reduce((prev, curr) => {
+            prev[curr] = ++prev[curr] || 1;
+            return prev;
+        }, {});
     }
-    // 현재 시간 반환
     function getCurTime(type){
         var diff = 1000 * 60 * 60 * 9
         if (type === "date"){
@@ -276,7 +232,6 @@
             return new Date((new Date()).getTime() + diff).toISOString().slice(11,16)
         }
     }
-    // 현재 선택된 month checked 출력
     function displayMonthChecked(month){
         var monthObject = {
             1: 'january',
@@ -294,11 +249,9 @@
         };
         document.getElementById(monthObject[month]).checked = true
     }
-    // 현재 year 출력
     function displayYear(year){
         document.getElementById("year").innerText = year + "년"
     }
-    // calander 출력
     function displayCalander(calander, month, today){
         for (var i of calander) {
             var item = document.createElement("div")
@@ -321,91 +274,47 @@
             document.getElementById("table").appendChild(item)
         }
     }
-    // calander에 rank에 따른 schedule 출력
-    function displaySchedule(schedules) {
-        for (var i in schedules){
-            var myCount = Object.values(schedules[i]).length
+    function displaySchedulesCount(schedulesCount) {
+        for (var i in schedulesCount){
+            var count = schedulesCount[i]
             var element = document.getElementById(i)
-            
+
             var node = document.createElement("div")
             node.className = "scheduler-calander-table-date-item-count"
-            node.innerText = myCount + "개의 일정"
+            node.innerText = count + "개의 일정"
             element.appendChild(node)
-
             element.classList.add("scheduler-calander-table-date-item-clickable")
-            element.addEventListener("click", function() {
-                document.getElementById("scheduleModal").classList.remove("available");
-            })
         }
     }
-    function displayLeaderSchedule(schedules, name){
-        for (var i in schedules){
-            var myCount = Object.values(schedules[i]).filter((k) => k.name === name).length
-            var departmentCount = Object.values(schedules[i]).filter((k) => k.name !== name).length
+    function displayDepartmentSchedulesCount(departmentSchedulesCount){
+        for (var i in departmentSchedulesCount){
+            var count = departmentSchedulesCount[i]
             var element = document.getElementById(i)
 
-            if(myCount > 0) {
-                var node = document.createElement("div")
-                node.className = "scheduler-calander-table-date-item-count"
-                node.innerText = myCount + "개의 일정"
-                element.appendChild(node)
-            }
-            if(departmentCount > 0){
-                var node2 = document.createElement("div")
-                node2.className = "scheduler-calander-table-date-item-count"
-                node2.innerText = departmentCount + "개의 팀원일정"
-                element.appendChild(node2)
-            }
-
+            var node = document.createElement("div")
+            node.className = "scheduler-calander-table-date-item-count"
+            node.innerText = count + "개의 팀원일정"
+            element.appendChild(node)
             element.classList.add("scheduler-calander-table-date-item-clickable")
         }
     }
-    function displayScheduleModal(date) {
-        document.getElementById("scheduleDate").innerText = date.split("-")[0] + "년 " + date.split("-")[1] + "월 " + date.split("-")[2] + "일 일정"
-        document.getElementById("scheduleModal").classList.remove('unavailable')
-        document.getElementById("scheduleList").replaceChildren()
-
-        for (var i of schedules[date]){
-            var node = document.createElement("div")
-            node.className = "schedule-box-list-item"
-
-            var node2 = document.createElement("div")
-            node2.className = "schedule-box-list-item-detail"
-
-            var node3 = document.createElement("div")
-            node3.className = "schedule-box-list-item-detail-item"
-            node3.innerText = i.time
-            node2.appendChild(node3)
-
-            if(name !== i.name){ // 본인이 아닌 팀원 일정
-                var node4 = document.createElement("div")
-                node4.className = "schedule-box-list-item-detail-item"
-                node4.innerText = i.name
-                node2.appendChild(node4)
-            }
-
-            var node5 = document.createElement("div")
-            node5.className = "schedule-box-list-item-content"
-            node5.innerText = i.content
-
-            node.append(node2, node5)
-
-            document.getElementById("scheduleList").appendChild(node)
-        }
+    function offModalScreen() {
+        document.getElementById("modal").src = ""
+        document.getElementById("modal").classList.add('unavailable')
     }
 
     var year = <%=year%>
     var month = <%=month%>
     var rank = <%="\"" + account_rank + "\""%>
     var calander = <%=calander%>
-    var schedules = getArrToObj(<%=schedules%>)
-    var name = <%="\"" + account_name + "\""%>
-    console.log(schedules)
+    var schedulesCount = getCount(<%=schedules%>)
+    var departmentSchedulesCount = getCount(<%=departmentSchedules%>)
 
     displayMonthChecked(month)
     displayYear(year)
     displayCalander(calander, month, getCurTime("date"))
-    rank === "leader" ? displayLeaderSchedule(schedules,name) : displaySchedule(schedules)
+    displaySchedulesCount(schedulesCount)
+    if(rank === "leader") displayDepartmentSchedulesCount(departmentSchedulesCount)
 
     document.getElementById("logoutBtn").addEventListener("click", function() {
         location.href = "/action/actionLogout.jsp"
@@ -414,9 +323,8 @@
         location.href = "mypage.jsp"
     })
     document.getElementById("writeBtn").addEventListener("click", function() {
-        document.getElementById("writeModal").classList.remove('unavailable')
-        document.getElementById("writeModalDate").value = getCurTime("date")
-        document.getElementById("writeModalTime").value = getCurTime("time")
+        document.getElementById("modal").src = "write.jsp"
+        document.getElementById("modal").classList.remove('unavailable')
     })
     document.getElementById("prevYearBtn").addEventListener("click", function() {
         location.href = "scheduler.jsp?year=" + (year - 1).toString() + "&month=" + (month).toString()
@@ -429,11 +337,10 @@
             location.href = "scheduler.jsp?year=" + year.toString() + "&month=" + event.target.value
         })
     })
-    Array.from(document.getElementsByClassName("scheduler-calander-table-date-item-clickable")).forEach(function(btn) {
-        btn.addEventListener("click", function() {
-            displayScheduleModal(btn.id)
-        })
-    })
+    Array.from(document.getElementsByClassName("scheduler-calander-table-date-item-clickable")).forEach((btn) => {btn.addEventListener("click", function(event) {
+        document.getElementById("modal").src = "schedule.jsp?date=" + event.target.id
+        document.getElementById("modal").classList.remove('unavailable')
+    })})
 </script>
 
 </html>
