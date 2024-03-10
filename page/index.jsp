@@ -3,8 +3,6 @@
 <%
     String account_idx = (String) session.getAttribute("account_idx");
 
-    out.println(account_idx);
-
     if(account_idx == null){
         out.println("<script>location.href = '/login.jsp'</script>");
     }

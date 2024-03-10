@@ -37,7 +37,7 @@
   color: var(--color-lightGray);
 }
 
-.login-form-submit {
+.login-form-login {
   width: 100%;
   color: var(--color-white);
   background-color: var(--color-lightBlue);

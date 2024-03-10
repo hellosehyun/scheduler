@@ -74,7 +74,7 @@
         insertQuery.setString(6, department);
         insertQuery.executeUpdate();
 
-        response.sendRedirect("/login.jsp");
+        out.println("<script>location.href = '/login.jsp'</script>");
 
     } catch (Exception error) {
         out.println("<script>alert('" + error.getMessage() + "')</script>");

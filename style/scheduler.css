@@ -143,9 +143,6 @@
   flex-direction: column;
   position: relative;
 }
-.scheduler-calander-table-date-item-today{
-  background-color: var(--color-lightBlue);
-}
 .scheduler-calander-table-date-item-day{
   pointer-events: none;
   position: absolute;

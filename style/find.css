@@ -60,7 +60,7 @@
   cursor: pointer;
 }
 
-.find-form-box-submit {
+.find-form-box-search {
   color: var(--color-white);
   background-color: var(--color-lightBlue);
   border: none;

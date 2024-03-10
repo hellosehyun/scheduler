@@ -49,7 +49,7 @@
   color: var(--color-lightGray);
 }
 
-.register-form-submit {
+.register-form-register {
   width: 100%;
   color: var(--color-white);
   background-color: var(--color-navy);

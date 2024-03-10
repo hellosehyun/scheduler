@@ -31,8 +31,9 @@
     info += "rank" + ":" + "\"" + result.getString(3) + "\"" + ",";
     info += "department" + ":" + "\"" + result.getString(4) + "\"" + "}";
 %>
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 
 <head>
     <meta charset="UTF-8">
@@ -47,63 +48,40 @@
         <a href="/scheduler.jsp" class="mypageEdit-box-title">
             <span>스케</span><span class="mypageEdit-box-title-lightBlue">줄러</span>
         </a>
-        <button id="back" class="mypageEdit-box-back">스케줄러 페이지로 돌아가기</button>
-        <div class="mypageEdit-box-subtitle">내 정보</div>
-        <form id="form" class="mypageEdit-box-info" action="/action/actionEditAccount.jsp">
-            <div class="mypageEdit-box-info-item">
-                <div class="mypageEdit-box-info-item-left">
-                    이름
-                </div>
-                <input id="name" placeholder="이름을 입력해주세요" name="name" class="mypageEdit-box-info-item-right" type="text">
-            </div>
-            <div class="mypageEdit-box-info-item">
-                <div class="mypageEdit-box-info-item-left">
-                    이메일
-                </div>
-                <input id="email" placeholder="이메일을 입력해주세요" name="email" type="email" class="mypageEdit-box-info-item-right">
-            </div>
-            <div class="mypageEdit-box-info-item">
-                <div class="mypageEdit-box-info-item-left">
-                    비밀번호
-                </div>
-                <input id="pw" placeholder="비밀번호를 입력해주세요" class="mypageEdit-box-info-item-right" name="pw" type="password">
-            </div>
-            <div class="mypageEdit-box-info-item">
-                <div class="mypageEdit-box-info-item-left">
-                    비밀번호 확인
-                </div>
-                <input id="pwConfirm" name="pwConfirm" placeholder="비밀번호를 다시 입력해주세요" class="mypageEdit-box-info-item-right" type="password">
-            </div>
-            <div class="mypageEdit-box-info-item">
-                <div class="mypageEdit-box-info-item-left">
-                    부서
-                </div>
-                <select class="mypageEdit-box-info-item-right" name="department" id="department">
-                    <option value="design">
-                        디자인팀
-                    </option>
-                    <option value="plan">
-                        기획팀
-                    </option>
-                </select>
-            </div>
-            <div class="mypageEdit-box-info-item">
-                <div class="mypageEdit-box-info-item-left">
-                    직급
-                </div>
-                <select class="mypageEdit-box-info-item-right" name="rank" id="rank">
-                    <option value="member">
-                        팀원
-                    </option>
-                    <option value="leader">
-                        팀장
-                    </option>
-                </select>
-            </div>
-        </form>
+        <div class="mypageEdit-box-subhead">내 정보</div>
+        <div class="mypageEdit-box-item">
+            <div class="mypageEdit-box-item-left">이름</div>
+            <input id="name" placeholder="이름을 입력해주세요"  class="mypageEdit-box-item-right" type="text">
+        </div>
+        <div class="mypageEdit-box-item">
+            <div class="mypageEdit-box-item-left">이메일</div>
+            <input id="email" placeholder="이메일을 입력해주세요" type="email" class="mypageEdit-box-item-right">
+        </div>
+        <div class="mypageEdit-box-item">
+            <div class="mypageEdit-box-item-left">비밀번호</div>
+            <input id="pw" placeholder="비밀번호를 입력해주세요" class="mypageEdit-box-item-right" type="password">
+        </div>
+        <div class="mypageEdit-box-item">
+            <div class="mypageEdit-box-item-left">비밀번호 확인</div>
+            <input id="pwConfirm" placeholder="비밀번호를 다시 입력해주세요" class="mypageEdit-box-item-right" type="password">
+        </div>
+        <div class="mypageEdit-box-item">
+            <div class="mypageEdit-box-item-left">부서</div>
+            <select class="mypageEdit-box-item-right" id="department">
+                <option value="design">디자인팀</option>
+                <option value="plan">기획팀</option>
+            </select>
+        </div>
+        <div class="mypageEdit-box-item">
+            <div class="mypageEdit-box-item-left">직급</div>
+            <select class="mypageEdit-box-item-right" id="rank">
+                <option value="member">팀원</option>
+                <option value="leader">팀장</option>
+            </select>
+        </div>
         <div class="mypageEdit-box-manage">
             <button class="mypageEdit-box-manage-cancel" id="cancel">취소</button>
-            <button class="mypageEdit-box-manage-save" id="submit">저장</button>
+            <button class="mypageEdit-box-manage-save" id="save">저장</button>
         </div>
     </div>
 </body>
@@ -148,13 +126,7 @@
     document.getElementById("department").options.selectedIndex = Array.from(document.getElementById("department").children).findIndex((i) => i.value === info.department)
     document.getElementById("rank").options.selectedIndex = Array.from(document.getElementById("rank").children).findIndex((i) => i.value === info.rank)
 
-    document.getElementById("back").addEventListener("click", function(event) {
-        event.preventDefault();
-        location.href = "/scheduler.jsp"
-    })
-    document.getElementById("submit").addEventListener("click", function(event) {
-        event.preventDefault();
-        
+    document.getElementById("save").addEventListener("click", function() {
         var pw = document.getElementById("pw").value
         var pwConfirm = document.getElementById("pwConfirm").value
         var email = document.getElementById("email").value
@@ -163,12 +135,11 @@
         var rank = document.getElementById("rank").value
 
         if(validateData(pw, pwConfirm, email, name, department, rank)){
-            document.getElementById("form").submit()
+            location.href = "/action/actionEditAccount.jsp?pw=" + pw + "&pwConfirm=" + pwConfirm + "&email=" + email + "&name=" + name + "&department=" + department + "&rank=" + rank
         }
     })
-    document.getElementById("cancel").addEventListener("click", function(event) {
-        event.preventDefault();
-        history.back()
+    document.getElementById("cancel").addEventListener("click", function() {
+        location.href = "/mypage.jsp"
     })
 </script>
 

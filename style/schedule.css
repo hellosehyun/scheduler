@@ -15,7 +15,7 @@
   box-shadow: var(--shadow);
 }
 
-.schedule-box-title {
+.schedule-box-date {
   width: 100%;
   font-size: var(--fontSize-big);
 }
@@ -63,7 +63,10 @@
 }
 
 .schedule-box-list-item-content {
+  width: 60%;
   font-size: var(--fontSize-small);
+  overflow: auto;
+  white-space: nowrap;
 }
 
 .schedule-box-list-item-manage {

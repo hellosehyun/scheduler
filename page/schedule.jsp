@@ -48,7 +48,7 @@
         schedules.add(tmp);
     }
 
-    // 팀장
+    // 팀장 (팀원 스케줄)
     if(account_rank.equals("leader")) {
         String sql3 = "SELECT schedule.time, schedule.content, schedule.idx, account.name FROM schedule JOIN account ON schedule.account_idx = account.idx WHERE schedule.date = ? AND account.department = ? AND NOT schedule.account_idx = ?";
         PreparedStatement query3 = connect.prepareStatement(sql3);
@@ -70,20 +70,20 @@
 %>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="../style/init.css">
-    <link rel="stylesheet" href="../style/schedule.css">
+    <link rel="stylesheet" href="/../style/init.css">
+    <link rel="stylesheet" href="/../style/schedule.css">
 </head>
 
 <body class="schedule-body">
     <div class="schedule-box">
-        <div class="schedule-box-title" id="scheduleDate"></div>
-        <div class="schedule-box-list" id="scheduleList"></div>
+        <div class="schedule-box-date" id="date"></div>
+        <div class="schedule-box-list" id="list"></div>
         <button class="schedule-box-cancel" id="scheduleModalCancel">닫기</button>
     </div>
 </body>
@@ -223,11 +223,11 @@
             return 0
         })
         for(var i of nodes){
-            document.getElementById("scheduleList").appendChild(i)
+            document.getElementById("list").appendChild(i)
         }
     }
     function displayDate(date){
-        document.getElementById("scheduleDate").innerText = Number(date.split("-")[0]) + "년 " + Number(date.split("-")[1]) + "월 " + Number(date.split("-")[2]) + "일 일정"
+        document.getElementById("date").innerText = Number(date.split("-")[0]) + "년 " + Number(date.split("-")[1]) + "월 " + Number(date.split("-")[2]) + "일 일정"
     }
     function validateData(date, time, content) {
         var dateRegex =  /^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/

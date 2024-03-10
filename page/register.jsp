@@ -1,14 +1,14 @@
 <%@ page language="java" contentType="text/html" pageEncoding="utf-8" %>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="../style/init.css">
-    <link rel="stylesheet" href="../style/register.css">
+    <link rel="stylesheet" href="/../style/init.css">
+    <link rel="stylesheet" href="/../style/register.css">
 </head>
 
 <body class="register-body">
@@ -20,29 +20,17 @@
         <input id="email" class="register-form-input" placeholder="이메일을 입력해주세요" type="email">
         <input id="name" class="register-form-input" placeholder="이름을 입력해주세요" type="text">
         <select id="department" required class="register-form-select">
-            <option value="" hidden>
-                부서를 선택해주세요
-            </option>
-            <option value="design">
-                디자인팀
-            </option>
-            <option value="plan">
-                기획팀
-            </option>
+            <option value="" hidden>부서를 선택해주세요</option>
+            <option value="design">디자인팀</option>
+            <option value="plan">기획팀</option>
         </select>
         <select id="rank" required class="register-form-select">
-            <option value="" hidden>
-                직급을 선택해주세요
-            </option>
-            <option value="member">
-                팀원
-            </option>
-            <option value="leader">
-                팀장
-            </option>
+            <option value="" hidden>직급을 선택해주세요</option>
+            <option value="member">팀원</option>
+            <option value="leader">팀장</option>
         </select>
-        <button class="register-form-submit" id="registerBtn">회원가입</button>
-        <a class="register-form-login" href="login.jsp">계정이 있으신가요?</a>
+        <button class="register-form-register" id="register">회원가입</button>
+        <a class="register-form-login" href="/login.jsp">계정이 있으신가요?</a>
     </div>
 </body>
 
@@ -83,9 +71,8 @@
         }
         return true
     }
-    document.getElementById("registerBtn").addEventListener("click", function(event){
-        event.preventDefault()
 
+    document.getElementById("register").addEventListener("click", function(){
         var id = document.getElementById("id").value
         var pw = document.getElementById("pw").value
         var pwConfirm = document.getElementById("pwConfirm").value

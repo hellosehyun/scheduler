@@ -36,14 +36,14 @@
 
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="../style/init.css">
-    <link rel="stylesheet" href="../style/mypage.css">
+    <link rel="stylesheet" href="/../style/init.css">
+    <link rel="stylesheet" href="/../style/mypage.css">
 </head>
 
 <body class="mypage-body">
@@ -55,47 +55,28 @@
         <div class="mypage-box-subtitle">내 정보</div>
         <div class="mypage-box-info">
             <div class="mypage-box-info-item">
-                <div class="mypage-box-info-item-left">
-                    이름
-                </div>
-                <div class="mypage-box-info-item-right" id="name">
-                    홍길동
-                </div>
+                <div class="mypage-box-info-item-left">이름</div>
+                <div class="mypage-box-info-item-right" id="name"></div>
             </div>
             <div class="mypage-box-info-item">
-                <div class="mypage-box-info-item-left">
-                    이메일
-                </div>
-                <div class="mypage-box-info-item-right" id="email">
-                </div>
+                <div class="mypage-box-info-item-left">이메일</div>
+                <div class="mypage-box-info-item-right" id="email"></div>
             </div>
             <div class="mypage-box-info-item">
-                <div class="mypage-box-info-item-left">
-                    아이디
-                </div>
-                <div class="mypage-box-info-item-right" id="id">
-                </div>
+                <div class="mypage-box-info-item-left">아이디</div>
+                <div class="mypage-box-info-item-right" id="id"></div>
             </div>
             <div class="mypage-box-info-item">
-                <div class="mypage-box-info-item-left">
-                    비밀번호
-                </div>
-                <div class="mypage-box-info-item-right" id="pw">
-                </div>
+                <div class="mypage-box-info-item-left">비밀번호</div>
+                <div class="mypage-box-info-item-right" id="pw"></div>
             </div>
             <div class="mypage-box-info-item">
-                <div class="mypage-box-info-item-left">
-                    부서
-                </div>
-                <div class="mypage-box-info-item-right" id="department">
-                </div>
+                <div class="mypage-box-info-item-left">부서</div>
+                <div class="mypage-box-info-item-right" id="department"></div>
             </div>
             <div class="mypage-box-info-item">
-                <div class="mypage-box-info-item-left">
-                    직급
-                </div>
-                <div class="mypage-box-info-item-right" id="rank">
-                </div>
+                <div class="mypage-box-info-item-left">직급</div>
+                <div class="mypage-box-info-item-right" id="rank"></div>
             </div>
         </div>
         <div class="mypage-box-manage">

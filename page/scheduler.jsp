@@ -184,7 +184,7 @@
                 <div class="scheduler-calander-table-days-item">금</div>
                 <div class="scheduler-calander-table-days-item">토</div>
             </div>
-        <div class="scheduler-calander-table-date" id="table">
+        <div class="scheduler-calander-table-date" id="calander">
         </div>
     </div>
 </div>
@@ -206,68 +206,68 @@
             return new Date((new Date()).getTime() + diff).toISOString().slice(11,16)
         }
     }
-    function displayMonthBtn(year, month){
-        for(var i = 1 ; i <= 12 ; i++){
-            var node = document.createElement("button")
-            node.className = "scheduler-calander-month-btn"
-            node.innerText = i + "월"
-            node.value = i
-            if (i === month){
-                node.classList.add("scheduler-calander-month-btn-checked")
-            }
+    function createMonthNode(year, month, i){
+        var node = document.createElement("button")
+        node.className = "scheduler-calander-month-btn"
+        node.innerText = i + "월"
+        node.value = i
+        if (i === month){
+            node.classList.add("scheduler-calander-month-btn-checked")
+        }
+        node.addEventListener("click", function(event) {
+            location.href = "scheduler.jsp?year=" + year.toString() + "&month=" + event.target.value
+        })
+        return node
+    }
+    function createCalanderNode(date, month, today, schedulesCount, departmentSchedulesCount){
+        var node = document.createElement("div")
+        node.className = "scheduler-calander-table-date-item"
+        node.value = date
+
+        var node2 = document.createElement("div")
+        node2.className = "scheduler-calander-table-date-item-day"
+        node2.innerText = Number(date.split("-")[2])
+        node.appendChild(node2)
+
+        if(Number(date.split("-")[1]) !== month && date !== today){
+            node2.classList.add("scheduler-calander-table-date-item-outside")
+        }
+        if (date === today) {
+            node.style.backgroundColor = "var(--color-lightBlue)"
+            node2.classList.add("scheduler-calander-table-date-item-day-today")
+        }
+        if (date in schedulesCount) {
+            var node3 = document.createElement("div")
+            node3.className = "scheduler-calander-table-date-item-count"
+            node3.innerText = schedulesCount[date] + "개의 일정"
+            node.appendChild(node3)
+        }
+        if (date in departmentSchedulesCount) {
+            var node4 = document.createElement("div")
+            node4.className = "scheduler-calander-table-date-item-count"
+            node4.innerText = departmentSchedulesCount[date] + "개의 팀원일정"
+            node.appendChild(node4)
+        }
+        if (date in schedulesCount || date in departmentSchedulesCount) {
+            node.classList.add("scheduler-calander-table-date-item-clickable")
             node.addEventListener("click", function(event) {
-                location.href = "scheduler.jsp?year=" + year.toString() + "&month=" + event.target.value
+                document.getElementById("modal").src = "schedule.jsp?date=" + event.target.value
+                document.getElementById("modal").classList.remove('unavailable')
             })
-            document.getElementById("month").appendChild(node)
+        }
+        return node
+    }
+    function displayMonthNodes(nodes){
+        for(var i of nodes){
+            document.getElementById("month").appendChild(i)
         }
     }
     function displayYear(year){
         document.getElementById("year").innerText = year + "년"
     }
-    function displayCalander(calander, month, today){
-        for (var i of calander) {
-            var item = document.createElement("div")
-            item.className = "scheduler-calander-table-date-item"
-            item.id = i
-
-            var day = document.createElement("div")
-            day.className = "scheduler-calander-table-date-item-day"
-            day.innerText = Number(i.split("-")[2])
-            item.appendChild(day)
-
-            // 현재 월에 벗어난 월 폰트 색상
-            if(Number(i.split("-")[1]) !== month && i !== today)
-                day.classList.add("scheduler-calander-table-date-item-outside")
-            // 오늘 날짜 스타일
-            if (i === today) {
-                item.classList.add("scheduler-calander-table-date-item-today")
-                day.classList.add("scheduler-calander-table-date-item-day-today")
-            }
-            document.getElementById("table").appendChild(item)
-        }
-    }
-    function displaySchedulesCount(schedulesCount) {
-        for (var i in schedulesCount){
-            var count = schedulesCount[i]
-            var element = document.getElementById(i)
-
-            var node = document.createElement("div")
-            node.className = "scheduler-calander-table-date-item-count"
-            node.innerText = count + "개의 일정"
-            element.appendChild(node)
-            element.classList.add("scheduler-calander-table-date-item-clickable")
-        }
-    }
-    function displayDepartmentSchedulesCount(departmentSchedulesCount){
-        for (var i in departmentSchedulesCount){
-            var count = departmentSchedulesCount[i]
-            var element = document.getElementById(i)
-
-            var node = document.createElement("div")
-            node.className = "scheduler-calander-table-date-item-count"
-            node.innerText = count + "개의 팀원일정"
-            element.appendChild(node)
-            element.classList.add("scheduler-calander-table-date-item-clickable")
+    function displayCalanderNodes(nodes) {
+        for(var i of nodes){
+            document.getElementById("calander").appendChild(i)
         }
     }
     function offModalScreen() {
@@ -282,11 +282,9 @@
     var schedulesCount = getCount(<%=schedules%>)
     var departmentSchedulesCount = getCount(<%=departmentSchedules%>)
 
-    displayMonthBtn(year, month)
+    displayMonthNodes(Array.from({ length: 12 }, (_, i) => i + 1).map((i) => createMonthNode(year, month, i)))
     displayYear(year)
-    displayCalander(calander, month, getCurTime("date"))
-    displaySchedulesCount(schedulesCount)
-    if(rank === "leader") displayDepartmentSchedulesCount(departmentSchedulesCount)
+    displayCalanderNodes(calander.map((i) => createCalanderNode(i, month, getCurTime("date"), schedulesCount, departmentSchedulesCount)))
 
     document.getElementById("logoutBtn").addEventListener("click", function() {
         location.href = "/action/actionLogout.jsp"
@@ -304,10 +302,6 @@
     document.getElementById("nextYearBtn").addEventListener("click", function() {
         location.href = "scheduler.jsp?year=" + (year + 1).toString() + "&month=" + (month).toString()
     })
-    Array.from(document.getElementsByClassName("scheduler-calander-table-date-item-clickable")).forEach((btn) => {btn.addEventListener("click", function(event) {
-        document.getElementById("modal").src = "schedule.jsp?date=" + event.target.id
-        document.getElementById("modal").classList.remove('unavailable')
-    })})
 </script>
 
 </html>
