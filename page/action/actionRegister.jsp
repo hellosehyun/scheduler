@@ -77,7 +77,8 @@
         out.println("<script>location.href = '/login.jsp'</script>");
 
     } catch (Exception error) {
-        out.println("<script>alert('" + error.getMessage() + "')</script>");
+        out.println("<script>alert('" + error.getMessage() + "');</script>");
         out.println("<script>history.back()</script>");
+        return;
     }
 %>

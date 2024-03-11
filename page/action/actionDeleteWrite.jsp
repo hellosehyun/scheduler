@@ -13,9 +13,7 @@
 
         // 세션 체크
         if(account_idx == null){
-            out.println("<script>alert('로그인 세션 만료');</script>");
-            out.println("<script>location.href = '/login.jsp'</script>");
-            return;
+            throw new Exception("로그인 세션 만료");
         }
 
         // 데이테베이스 연결
@@ -32,7 +30,10 @@
         // 페이지 이동
         out.println("<script>location.href = '/scheduler.jsp'</script>");
     } catch (Exception error) {
-        out.println("<script>alert('" + error.getMessage() + "');</script>");
-        out.println("<script>history.back()</script>");
+        if (error.getMessage().equals("로그인 세션 만료")){
+            out.println("<script>alert('" + error.getMessage() + "');</script>");
+            out.println("<script>location.href = '/'</script>");
+            return;
+        }
     }
 %>

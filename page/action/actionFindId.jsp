@@ -40,8 +40,15 @@
         // 페이지 이동
         out.println("<script>location.href = '/login.jsp'</script>");
     } catch (Exception error) {
-        // alert 이후 페이지 이동
-        out.println("<script>alert('" + error.getMessage() + "');</script>");
-        out.println("<script>history.back()</script>");
+        if (error.getMessage().equals("계정 없음")){
+            out.println("<script>alert('" + error.getMessage() + "');</script>");
+            out.println("<script>history.back()</script>");
+            return;
+        }
+        else {
+            out.println("<script>alert('" + error.getMessage() + "');</script>");
+            out.println("<script>history.back()</script>");
+            return;
+        }
     }
 %>

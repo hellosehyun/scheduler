@@ -89,7 +89,7 @@
 </body>
 
 <script>
-    function createColorTable(departmentSchedules) {
+    function getColorTable(departmentSchedules) {
         var colorTable = {}
         var colors = ["#F8E8EE", "#D2E9E9", "#E3F4F4", "#F8F6F4", "#C6D6A6", "#D7E9FD", "#F8E4C1", "#FEDCD2", "#F5E8DD"]
         var names = Array.from(new Set(departmentSchedules.map((i) => i.name)))
@@ -99,7 +99,7 @@
         }
         return colorTable
     }
-    function createNode(schedule, date) {
+    function getScheduleNode(schedule) {
         var node = document.createElement("div")
         node.className = "schedule-box-list-item"
         
@@ -122,7 +122,7 @@
         node6.innerText = "수정"
         node6.addEventListener("click", function() {
             node.classList.add("unavailable")
-            node.after(createEditNode(schedule, date, node))
+            node.after(getEditNode(schedule, date, node))
         })
 
         var node7 = document.createElement("button")
@@ -139,7 +139,7 @@
 
         return node
     }
-    function createDepartmentNode(schedule, colorTable) {
+    function getDeparmentNode(schedule) {
         var node = document.createElement("div")
         node.className = "schedule-box-list-item"
         node.style.backgroundColor = colorTable[schedule.name]
@@ -163,7 +163,7 @@
 
         return node
     }
-    function createEditNode(schedule, date, parentNode) {
+    function getEditNode(schedule, date, parentNode) {
         var node = document.createElement("div")
         node.className = "schedule-box-list-itemEdit"
 
@@ -211,8 +211,16 @@
         
         return node
     }
-    function displaySchedules(nodes) {
-        nodes.sort(function(a,b) {
+    function getScheduleNodeList(schedules, departmentSchedules) {
+        var result = []
+
+        for (var schedule of schedules) {
+            result.push(getScheduleNode(schedule))
+        }
+        for (var departmentSchedule of departmentSchedules) {
+            result.push(getDeparmentNode(departmentSchedule))
+        }
+        result.sort(function(a,b) {
             var timeA = new Date("2000-01-01 " + a.getElementsByClassName("schedule-box-list-item-detail-item")[0].value)
             var timeB = new Date("2000-01-01 " + b.getElementsByClassName("schedule-box-list-item-detail-item")[0].value)
 
@@ -222,8 +230,12 @@
                 return -1
             return 0
         })
-        for(var i of nodes){
-            document.getElementById("list").appendChild(i)
+
+        return result
+    }
+    function displayScheduleNodeList(scheduleNodeList) {
+        for(var node of scheduleNodeList){
+            document.getElementById("list").appendChild(node)
         }
     }
     function displayDate(date){
@@ -253,13 +265,13 @@
     var date = <%="\"" + date + "\""%>
     var schedules = <%=schedules%>
     var departmentSchedules = <%=departmentSchedules%>
-    var colorTable = createColorTable(departmentSchedules)
+    var colorTable = getColorTable(departmentSchedules)
 
     displayDate(date)
-    displaySchedules([...schedules.map((i) => createNode(i, date)), ...departmentSchedules.map((i) => createDepartmentNode(i, colorTable))])
+    displayScheduleNodeList(getScheduleNodeList(schedules, departmentSchedules))
 
     document.getElementById("scheduleModalCancel").addEventListener("click", function(event){
-        window.parent.offModalScreen()
+        window.parent.displayOffModal()
     })
 </script>
 

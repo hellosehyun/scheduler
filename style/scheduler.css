@@ -6,10 +6,6 @@
   border: none;
 }
 
-.unavailable{
-  display: none;
-}
-
 .scheduler-calander {
   width: 750px;
   height: 750px;
@@ -92,9 +88,6 @@
   font-size: var(--fontSize-medium);
   cursor: pointer;
 }
-.scheduler-calander-month-btn-checked {
-  color: var(--color-lightBlue);
-}
 
 .scheduler-calander-table {
   width: 100%;
@@ -111,6 +104,7 @@
   height: 25px;
   border-collapse: collapse;
 }
+
 .scheduler-calander-table-days-item {
   border: 1px solid var(--color-gray);
   border-right: none;
@@ -136,46 +130,51 @@
   border-top: none;
   width: calc(100% / 7);
   height: calc(100% / 6);
-  display: flex;
-  align-items: center;
-  padding: 10px 0;
-  justify-content: space-evenly;
-  flex-direction: column;
   position: relative;
 }
-.scheduler-calander-table-date-item-day{
-  pointer-events: none;
-  position: absolute;
-  top: 0;
-  left: 2px;
-  font-size: var(--fontSize-tiny);
-}
-.scheduler-calander-table-date-item-day-today{
-  pointer-events: none;
-  color: var(--color-white);
-}
-.scheduler-calander-table-date-item-clickable{
-  cursor: pointer;
+.scheduler-calander-table-date-item:nth-child(7n + 7) {
+  border-right: 1px solid var(--color-gray);
 }
 
-.scheduler-calander-table-date-item-count{
+.scheduler-calander-table-date-item-schedule{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  flex-direction: column;
+
+}
+
+.scheduler-calander-table-date-item-schedule-count{
   pointer-events: none;
   color: var(--color-white);
   background-color: var(--color-black);
   border: none;
   padding: 6px;
+  width: fit-content;
   font-size: var(--fontSize-tiny);
   border-radius: 10px;
 }
-.scheduler-calander-table-date-item:nth-child(7n + 7) {
-  border-right: 1px solid var(--color-gray);
-  background-color: var(--color-whiteGray);
-}
-.scheduler-calander-table-date-item:nth-child(7n + 1) {
-  background-color: var(--color-whiteGray);
-}
 
-.scheduler-calander-table-date-item-outside {
-  pointer-events: none;
+.util-outer {
   color: var(--color-gray);
+}
+.util-side {
+  background-color: var(--color-whiteGray);
+}
+.util-today {
+  background-color: var(--color-lightBlue);
+  color: var(--color-white);
+}
+.util-unavailable{
+  display: none;
+}
+.util-checked {
+  color: var(--color-lightBlue);
 }

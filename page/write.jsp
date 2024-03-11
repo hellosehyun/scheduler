@@ -12,18 +12,18 @@
 %>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="../style/init.css">
-    <link rel="stylesheet" href="../style/write.css">
+    <link rel="stylesheet" href="/../style/init.css">
+    <link rel="stylesheet" href="/../style/write.css">
 </head>
 
 <body class="write-body">
-    <div id="writeModalForm" class="write-form">
+    <div class="write-form">
         <div class="write-form-title">일정 추가하기</div>
         <input id="writeModalDate" class="write-form-input" type="date">
         <input id="writeModalTime" class="write-form-input" type="time">
@@ -66,14 +66,14 @@
         return true
     }
 
-    document.getElementById("writeModalCancel").addEventListener("click", function(event){
-        window.parent.offModalScreen()
-    })
+
     document.getElementById("writeModalDate").value = getCurTime("date")
     document.getElementById("writeModalTime").value = getCurTime("time")
-    document.getElementById("writeModalSumbit").addEventListener("click", function(event){
-        event.preventDefault();
 
+    document.getElementById("writeModalCancel").addEventListener("click", function(){
+        window.parent.displayOffModal()
+    })
+    document.getElementById("writeModalSumbit").addEventListener("click", function(){
         var date = document.getElementById("writeModalDate").value
         var time = document.getElementById("writeModalTime").value
         var content = document.getElementById("writeModalContent").value
