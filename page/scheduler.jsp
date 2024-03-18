@@ -1,3 +1,4 @@
+
 <%@ page language="java" contentType="text/html" pageEncoding="utf-8" %>
 
 <%@ page import="java.sql.DriverManager" %>
@@ -111,11 +112,11 @@
 
     // 날짜 계산
     ArrayList<String> calander = new ArrayList(getCalander(year, month));
-    ArrayList<String> schedules = new ArrayList();
-    ArrayList<String> departmentSchedules = new ArrayList();
+    String schedules = "{";
+    String departmentSchedules = "{";
 
     // 본인 스케줄
-    String sql2 = "SELECT date FROM schedule WHERE account_idx = ? AND date between ? and ?;";
+    String sql2 = "SELECT date, COUNT(date) FROM schedule WHERE account_idx = ? AND date BETWEEN ? and ? GROUP BY date;";
     PreparedStatement query2 = connect.prepareStatement(sql2);
     query2.setString(1, account_idx);
     query2.setString(2, calander.get(0).split("\"")[1]);
@@ -123,12 +124,13 @@
     ResultSet result2 = query2.executeQuery();
 
     while(result2.next()){
-        schedules.add("\"" + result2.getString(1) + "\"");
+        schedules += "\"" + result2.getString(1) + "\"" + ":" + result2.getString(2) + ",";
     }
+    schedules += "}";
 
     // (팀장)
     if(account_rank.equals("leader")) {
-        String sql3 = "SELECT schedule.date FROM schedule JOIN account ON schedule.account_idx = account.idx WHERE schedule.date BETWEEN ? AND ? AND account.department = ? AND NOT schedule.account_idx = ?";
+        String sql3 = "SELECT schedule.date, COUNT(schedule.date) FROM schedule JOIN account ON schedule.account_idx = account.idx WHERE schedule.date BETWEEN ? and ? AND account.department = ? AND NOT schedule.account_idx = ? GROUP BY date;";
         PreparedStatement query3 = connect.prepareStatement(sql3);
         query3.setString(1, calander.get(0).split("\"")[1]);
         query3.setString(2, calander.get(calander.size() - 1).split("\"")[1]);
@@ -137,8 +139,9 @@
         ResultSet result3 = query3.executeQuery();
         
         while(result3.next()){
-            departmentSchedules.add("\"" + result3.getString(1) + "\"");
+            departmentSchedules += "\"" + result3.getString(1) + "\"" + ":" + result3.getString(2) + ",";
         }
+        departmentSchedules += "}";
     }
 %>
 
@@ -203,12 +206,6 @@
 </body>
 
 <script>
-    function getCount(arr) {
-        return arr.reduce((prev, curr) => {
-            prev[curr] = ++prev[curr] || 1;
-            return prev;
-        }, {});
-    }
     function getCurTime(type){
         var diff = 1000 * 60 * 60 * 9
         if (type === "date"){
@@ -290,8 +287,8 @@
     var year = <%=year%>
     var month = <%=month%>
     var calander = <%=calander%>
-    var schedulesCount = getCount(<%=schedules%>)
-    var departmentSchedulesCount = getCount(<%=departmentSchedules%>)
+    var schedulesCount = <%=schedules%>
+    var departmentSchedulesCount = <%=departmentSchedules%>
 
     displayMonthChecked(month)
     displayYear(year)
@@ -321,3 +318,4 @@
 </script>
 
 </html>
+
