@@ -36,10 +36,10 @@
 
 <script>
     function validateData(id, pw, pwConfirm, email, name, department, rank) {
-        var idRegex = /^[a-zA-Z0-9]{1,20}$/
-        var pwRegex = /^[a-zA-Z0-9!@#$%^&*()_+{}\[\]:;<>,.?~\\/\-=|]{4,20}$/
-        var emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,30}$/
-        var nameRegex = /^[a-zA-Z가-힣]{1,10}$/
+        var idRegex = /^(?=.*[a-zA-Z0-9])\S{4,20}$/
+        var pwRegex = /^[a-zA-Z0-9!@#$%^&*()_+{}[\]:;<>,.?~\\/\-=|]{8,20}$/
+        var emailRegex = /^(?=.{1,30}$)[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+        var nameRegex = /^[a-zA-Z가-힣]{2,10}$/
 
         if(!idRegex.test(id)){
             alert("유효하지 않은 아이디")

@@ -20,23 +20,23 @@
         String rank = request.getParameter("rank");
 
         // 유효성 체크
-        if(!id.matches("^[a-zA-Z0-9]{1,20}$")){
+        if(!id.matches("^(?=.*[a-zA-Z0-9])\\S{4,20}$")) {
             throw new Exception("유효하지 않은 아이디");
         }
-         if (!pw.matches("^[a-zA-Z0-9!@#$%^&*()_+{}\\[\\]:;<>,.?~\\\\/\\-=|]{4,20}$")) {
+        if(!pw.matches("^(?=.*[a-zA-Z0-9@#$%^&+=])(?=\\S+$).{8,20}$")) {
             throw new Exception("유효하지 않은 비밀번호");
         }
-        if(!pwConfirm.equals(pw)){
+        if(!pwConfirm.equals(pw)) {
             throw new Exception("비밀번호 불일치");
         }
-        if (!email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,30}$")) {
+        if (!email.matches("^(?=.{1,30}$)[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
             throw new Exception("유효하지 않은 이메일");
         }
-        if(!name.matches("^[a-zA-Z가-힣]{1,10}$")){
+        if(!name.matches("^[a-zA-Z가-힣]{2,10}$")) {
             throw new Exception("유효하지 않은 이름");
         }
         List<String> departmentList = Arrays.asList("design", "plan");
-        if(!departmentList.contains(department)){
+        if(!departmentList.contains(department)) {
             throw new Exception("유효하지 않은 부서");
         }
         List<String> rankList = Arrays.asList("member", "leader");
@@ -75,7 +75,6 @@
         insertQuery.executeUpdate();
 
         out.println("<script>location.href = '/login.jsp'</script>");
-
     } catch (Exception error) {
         out.println("<script>alert('" + error.getMessage() + "');</script>");
         out.println("<script>history.back()</script>");

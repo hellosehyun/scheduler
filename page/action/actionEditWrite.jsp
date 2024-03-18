@@ -28,7 +28,7 @@
             throw new Exception("유효하지 않은 시간");
         }
         if (!content.matches("^.{1,30}$")) {
-            throw new Exception("유효하지 않은 내용");
+            throw new Exception("유효하지 않은 내용 (최대 30자)");
         }
 
         // 데이테베이스 연결

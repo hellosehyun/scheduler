@@ -12,11 +12,11 @@
         String email = request.getParameter("email"); 
         String name = request.getParameter("name");
 
-        if(!email.matches("^[^\\s]+$")){
+        if(!email.matches("^(?=.{1,30}$)[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")){
             throw new Exception("이메일 입력 필수");
         }
-        if(!name.matches("^[^\\s]+$")){
-            throw new Exception("이름 입력 필수");
+        if(!name.matches("^.{1,10}$")){
+            throw new Exception("이름 입력 필수 (최대 10자)");
         }
 
         // 데이테베이스 연결

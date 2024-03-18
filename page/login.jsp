@@ -27,7 +27,7 @@
 </body>
 <script>
     function validateData(id, pw) {
-        var regex = /^[^\s]+$/
+        var regex = /^.{1,20}$/
 
         if(!regex.test(id)){
             alert("아이디 입력 필수")

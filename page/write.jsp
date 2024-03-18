@@ -59,7 +59,7 @@
             return false
         }
         if(!contentRegex.test(content)){
-            alert("유효하지 않은 내용")
+            alert("유효하지 않은 내용 (최대 30자)")
             return false
         }
         

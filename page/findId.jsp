@@ -28,14 +28,15 @@
 
 <script>
     function validateData(email, name) {
-        var regex = /^[^\s]+$/
+        var emailRegex = /^(?=.{1,30}$)[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+        var nameRegex = /^.{1,10}$/
 
-        if(!regex.test(email)){
-            alert("이메일 입력 필수")
+        if(!emailRegex.test(email)){
+            alert("유효하지 않은 이메일")
             return false
         }
-        if(!regex.test(name)){
-            alert("이름 입력 필수")
+        if(!nameRegex.test(name)){
+            alert("이름 입력 필수 (최대 10자)")
             return false
         }
         return true

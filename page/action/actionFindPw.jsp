@@ -12,11 +12,11 @@
         String email = request.getParameter("email"); 
         String id = request.getParameter("id");
 
-        if(!email.matches("^[^\\s]+$")){
+        if(!email.matches("^(?=.{1,30}$)[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")){
             throw new Exception("이메일 입력 필수");
         }
-        if(!id.matches("^[^\\s]+$")){
-            throw new Exception("아이디 입력 필수");
+        if(!id.matches("^.{1,20}$")){
+            throw new Exception("아이디 입력 필수 (최대 20자)");
         }
 
         // 데이테베이스 연결

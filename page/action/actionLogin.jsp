@@ -12,10 +12,10 @@
         String id = request.getParameter("id"); 
         String pw = request.getParameter("pw");
 
-        if(!id.matches("^[^\\s]+$")){
+        if(!id.matches("^.{1,20}$")){
             throw new Exception("아이디 입력 필수");
         }
-        if(!pw.matches("^[^\\s]+$")){
+        if(!pw.matches("^.{1,20}$")){
             throw new Exception("비밀번호 입력 필수");
         }
 
