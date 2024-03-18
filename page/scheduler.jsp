@@ -112,8 +112,8 @@
 
     // 날짜 계산
     ArrayList<String> calander = new ArrayList(getCalander(year, month));
-    String schedules = "{";
-    String departmentSchedules = "{";
+    String schedules = "{}";
+    String departmentSchedules = "{}";
 
     // 본인 스케줄
     String sql2 = "SELECT date, COUNT(date) FROM schedule WHERE account_idx = ? AND date BETWEEN ? and ? GROUP BY date;";
@@ -122,7 +122,8 @@
     query2.setString(2, calander.get(0).split("\"")[1]);
     query2.setString(3, calander.get(calander.size() - 1).split("\"")[1]);
     ResultSet result2 = query2.executeQuery();
-
+    
+    schedules = "{";
     while(result2.next()){
         schedules += "\"" + result2.getString(1) + "\"" + ":" + result2.getString(2) + ",";
     }
@@ -138,6 +139,7 @@
         query3.setString(4, account_idx);
         ResultSet result3 = query3.executeQuery();
         
+        departmentSchedules = "{";
         while(result3.next()){
             departmentSchedules += "\"" + result3.getString(1) + "\"" + ":" + result3.getString(2) + ",";
         }
