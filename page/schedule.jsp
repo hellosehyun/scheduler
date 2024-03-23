@@ -139,7 +139,7 @@
 
         return node
     }
-    function getDeparmentNode(schedule) {
+    function getDepartmentScheduleNode(schedule) {
         var node = document.createElement("div")
         node.className = "schedule-box-list-item"
         node.style.backgroundColor = colorTable[schedule.name]
@@ -218,7 +218,7 @@
             result.push(getScheduleNode(schedule))
         }
         for (var departmentSchedule of departmentSchedules) {
-            result.push(getDeparmentNode(departmentSchedule))
+            result.push(getDepartmentScheduleNode(departmentSchedule))
         }
         result.sort(function(a,b) {
             var timeA = new Date("2000-01-01 " + a.getElementsByClassName("schedule-box-list-item-detail-item")[0].value)

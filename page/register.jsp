@@ -42,11 +42,11 @@
         var nameRegex = /^[a-zA-Z가-힣]{2,10}$/
 
         if(!idRegex.test(id)){
-            alert("유효하지 않은 아이디")
+            alert("유효하지 않은 아이디 (4자 ~ 20자)")
             return false
         }
         if(!pwRegex.test(pw)){
-            alert("유효하지 않은 비밀번호")
+            alert("유효하지 않은 비밀번호 (8자 ~ 20자)")
             return false
         }
         if(pw !== pwConfirm){
@@ -58,7 +58,7 @@
             return false
         }
         if(!nameRegex.test(name)){
-            alert("유효하지 않은 이름")
+            alert("유효하지 않은 이름 (2자 ~ 10자)")
             return false
         }
         if(!['design', 'plan'].includes(department)){

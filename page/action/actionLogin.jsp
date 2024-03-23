@@ -13,10 +13,10 @@
         String pw = request.getParameter("pw");
 
         if(!id.matches("^.{1,20}$")){
-            throw new Exception("아이디 입력 필수");
+            throw new Exception("아이디 입력 필수 (최대 20자)");
         }
         if(!pw.matches("^.{1,20}$")){
-            throw new Exception("비밀번호 입력 필수");
+            throw new Exception("비밀번호 입력 필수 (최대 20자)");
         }
 
         // 데이테베이스 연결

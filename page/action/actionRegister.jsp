@@ -21,10 +21,10 @@
 
         // 유효성 체크
         if(!id.matches("^(?=.*[a-zA-Z0-9])\\S{4,20}$")) {
-            throw new Exception("유효하지 않은 아이디");
+            throw new Exception("유효하지 않은 아이디 (4자 ~ 20자)");
         }
         if(!pw.matches("^(?=.*[a-zA-Z0-9@#$%^&+=])(?=\\S+$).{8,20}$")) {
-            throw new Exception("유효하지 않은 비밀번호");
+            throw new Exception("유효하지 않은 비밀번호 (8자 ~ 20자)");
         }
         if(!pwConfirm.equals(pw)) {
             throw new Exception("비밀번호 불일치");
@@ -33,7 +33,7 @@
             throw new Exception("유효하지 않은 이메일");
         }
         if(!name.matches("^[a-zA-Z가-힣]{2,10}$")) {
-            throw new Exception("유효하지 않은 이름");
+            throw new Exception("유효하지 않은 이름 (2자 ~ 10자)");
         }
         List<String> departmentList = Arrays.asList("design", "plan");
         if(!departmentList.contains(department)) {

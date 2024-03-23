@@ -12,7 +12,7 @@
         String email = request.getParameter("email"); 
         String name = request.getParameter("name");
 
-        if(!email.matches("^(?=.{1,30}$)[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")){
+        if (!email.matches("^(?=.{1,30}$)[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
             throw new Exception("이메일 입력 필수");
         }
         if(!name.matches("^.{1,10}$")){

@@ -30,11 +30,11 @@
         var regex = /^.{1,20}$/
 
         if(!regex.test(id)){
-            alert("아이디 입력 필수")
+            alert("아이디 입력 필수 (최대 20자)")
             return false
         }
         if(!regex.test(pw)){
-            alert("비밀번호 입력 필수")
+            alert("비밀번호 입력 필수 (최대 20자)")
             return false
         }
         return true

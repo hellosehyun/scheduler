@@ -88,12 +88,12 @@
 
 <script>
     function validateData(pw, pwConfirm, email, name, department, rank) {
-        var pwRegex = /^[a-zA-Z0-9!@#$%^&*()_+{}\[\]:;<>,.?~\\/\-=|]{4,20}$/
-        var emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,30}$/
-        var nameRegex = /^[a-zA-Z가-힣]{1,10}$/
+        var pwRegex = /^[a-zA-Z0-9!@#$%^&*()_+{}[\]:;<>,.?~\\/\-=|]{8,20}$/
+        var emailRegex = /^(?=.{1,30}$)[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+        var nameRegex = /^[a-zA-Z가-힣]{2,10}$/
 
         if(!pwRegex.test(pw)){
-            alert("유효하지 않은 비밀번호")
+            alert("유효하지 않은 비밀번호 (8자 ~ 20자)")
             return false
         }
         if(pw !== pwConfirm){
@@ -105,7 +105,7 @@
             return false
         }
         if(!nameRegex.test(name)){
-            alert("유효하지 않은 이름")
+            alert("유효하지 않은 이름 (2자 ~ 10자)")
             return false
         }
         if(!['design', 'plan'].includes(department)){
